@@ -5,12 +5,13 @@
 
 ## Meta
 
-- **Loop iteration:** 3
-- **Last updated:** 2026-11-17 (iter 3)
-- **Current phase:** PHASE-3 (core) — Phase 2 complete, contracts gate 7/7 green
-- **Next queued action:** Phase 3: `core/scope.py` → `policy.py` → `audit.py` → `mission.py` → `orchestrator.py` + tests
+- **Loop iteration:** 4
+- **Last updated:** 2026-11-17 (iter 4)
+- **Current phase:** PHASE-6/7 (graph + research corpus) — Phase 3 core complete, safety+evidence gates green
+- **Next queued action:** Phase 6: graph schema.cypher, ingest.py, 5+ queries; then Phase 7 research corpus (aligned to curriculum P01/P02 goal projects)
 - **Blockers:** none
-- **Latest eval run:** 20/30 (67%) — contracts 7/7 ✅, harness ✅, process ✅; safety needs Phase 3
+- **Latest eval run:** 25/30 (83%) — safety ✅ contracts ✅ harness ✅ process ✅ evidence ✅; graph + research remain
+- **Curriculum alignment:** P01 (evidence vault) pulled forward into iter 4 per `.agents/curriculum.json`; P03 exits govern Phase 4 adapters; progressive disclosure honored (P04+ details not preloaded)
 
 ## Phase Checklist
 
@@ -50,11 +51,12 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Item | Status | Evidence / Notes |
 |------|--------|------------------|
-| `core/mission.py` — Mission model, schema-validated load | [ ] | |
-| `core/scope.py` — authorization/scope resolver | [ ] | |
-| `core/orchestrator.py` — run lifecycle, worker dispatch | [ ] | |
-| `core/policy.py` — safety policy, approval gating | [ ] | |
-| `core/audit.py` — append-only hash-chained audit log | [ ] | |
+| `core/mission.py` — Mission model, schema-validated load | [x] | iter 4 — loads+validates via jsonschema_lite; rejects non-active missions |
+| `core/scope.py` — authorization/scope resolver | [x] | iter 4 — deny-by-default; exclusions first; CIDR/host/app/component matching; 8 unit tests |
+| `core/orchestrator.py` — run lifecycle, worker dispatch | [x] | iter 4 — state machine; refuses out-of-scope; refuses observations without evidence |
+| `core/policy.py` — safety policy, approval gating | [x] | iter 4 — read_only/intrusive/consequential; approver must be in mission; all decisions audited |
+| `core/audit.py` — append-only hash-chained audit log | [x] | iter 4 — sha256 chain, tamper detection on reload, no removal API (test-enforced) |
+| `core/jsonschema_lite.py` + `core/evidence.py` + `tests/` (31 tests) | [x] | iter 4 — single-source validator; evidence vault with store/retrieval hash verification (P01/W2 exits) |
 
 ### Phase 4 — Adapters
 
@@ -82,8 +84,8 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Item | Status | Evidence / Notes |
 |------|--------|------------------|
-| `evidence/manifests/` conventions + README | [ ] | |
-| `evidence/objects/` content-addressed store layout | [ ] | |
+| `evidence/manifests/` conventions + README | [x] | iter 4 — pulled forward per curriculum P01/W2 (evidence vault before workers) |
+| `evidence/objects/` content-addressed store layout | [x] | iter 4 — immutability + content addressing + vault helper core/evidence.py |
 | `graph/schema.cypher` — full graph model | [ ] | |
 | `graph/ingest.py` — evidence → graph ingestion | [ ] | |
 | `graph/queries/` — cross-domain pattern queries | [ ] | |

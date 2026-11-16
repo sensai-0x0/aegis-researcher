@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-11-17T00:59:25+1030",
-  "commit": "016e355",
+  "timestamp": "2026-11-17T01:06:26+1030",
+  "commit": "6a5897b",
   "overall": {
-    "passed": 20,
+    "passed": 25,
     "total": 30,
-    "rate": 0.667
+    "rate": 0.833
   },
   "suites": {
     "safety": {
-      "passed": 2,
+      "passed": 5,
       "total": 5,
-      "rate": 0.4,
+      "rate": 1.0,
       "gate": 1.0,
-      "met": false
+      "met": true
     },
     "contracts": {
       "passed": 7,
@@ -36,11 +36,11 @@
       "met": true
     },
     "evidence": {
-      "passed": 1,
+      "passed": 3,
       "total": 3,
-      "rate": 0.333,
+      "rate": 1.0,
       "gate": 0.9,
-      "met": false
+      "met": true
     },
     "graph": {
       "passed": 0,
@@ -157,32 +157,32 @@
     {
       "id": "safety.scope-deny-by-default",
       "capability": "safety",
-      "passed": false,
-      "detail": "core/scope.py missing"
+      "passed": true,
+      "detail": "deny-by-default + assert_authorized present"
     },
     {
       "id": "safety.policy-approval-gating",
       "capability": "safety",
-      "passed": false,
-      "detail": "core/policy.py missing"
+      "passed": true,
+      "detail": "consequential actions gated by approval"
     },
     {
       "id": "safety.audit-append-only",
       "capability": "safety",
-      "passed": false,
-      "detail": "core/audit.py missing"
+      "passed": true,
+      "detail": "hash-chained, append-only, no delete/remove/truncate"
     },
     {
       "id": "evidence.manifests-documented",
       "capability": "evidence",
-      "passed": false,
-      "detail": "manifests README missing"
+      "passed": true,
+      "detail": "custody documented"
     },
     {
       "id": "evidence.objects-immutability",
       "capability": "evidence",
-      "passed": false,
-      "detail": "objects README missing"
+      "passed": true,
+      "detail": "immutability + content addressing"
     },
     {
       "id": "evidence.observation-no-claims",

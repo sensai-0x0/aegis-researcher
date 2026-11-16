@@ -64,4 +64,30 @@
   session's worktree, only fast-forward-verified `update-ref` on main.
 - Status: CLOSED
 
+### E-004 — orchestrator referenced undefined `_now()`; scope test mis-modeled exclusion priority
+- Date / Iteration: 2026-11-17 / 4
+- Capability: contracts (core correctness)
+- Symptom: 6 test failures — `NameError: _now` on run start; scope test expected an
+  excluded application to be allowed.
+- Root cause: (1) helper used but never defined — no import-time failure because the
+  symbol only resolves at call time; (2) test author forgot the fixture mission's
+  exclusions deny 203.0.113.0/25, which includes the named application's host.
+  Exclusion-wins is the DESIGNED deny-by-default semantics; the test was wrong.
+- Patch: defined `_now()` in `core/orchestrator.py`; rewrote the test to assert the
+  exclusion overrides the named application authorization (documenting priority).
+- Prevention: tests are part of the loop's self-check (init.md §5 step 4); exclusion
+  priority now has a dedicated regression test; eval-suite `safety` heuristics cover
+  the deny-by-default property from outside.
+- Status: CLOSED
+
+### E-005 — illegal transition authorized→concluded blocked legitimate empty-run conclude
+- Date / Iteration: 2026-11-17 / 4
+- Capability: contracts (core correctness)
+- Symptom: `test_lifecycle` failed; concluding an authorized run with zero dispatches
+  raised RuntimeError.
+- Root cause: state machine omitted the legitimate "authorized run ends unused" path.
+- Patch: `authorized → concluded` added to TRANSITIONS with inline rationale.
+- Prevention: covered by `test_lifecycle`; transition table is exported and testable.
+- Status: CLOSED
+
 <!-- Append new entries below. Never rewrite or delete existing entries. -->
