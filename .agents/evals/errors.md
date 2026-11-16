@@ -44,4 +44,24 @@
   the validator; any fixture that can't resolve to a schema fails).
 - Status: CLOSED
 
+### E-003 — concurrent sessions sharing the repo caused interleaved commits and a lost-merge window
+- Date / Iteration: 2026-11-17 / 3
+- Capability: process
+- Symptom: while this loop committed Phase 2, parallel sessions (user + worktrees)
+  switched branches in the shared primary tree; the iter-3 commit landed on
+  `feat/readme-rainbow-header` instead of the intended branch, the merge chain broke,
+  and the shared working tree was switched out mid-phase (contracts appeared empty
+  in-tree although committed elsewhere).
+- Root cause: multiple agents operating in ONE working tree; loop assumed exclusive
+  custody. Secondary: loop ran `reset --hard` inside another session's worktree
+  (aegis-worktrees/main) during sync — content happened to be identical to the
+  committed state, but the operation was unsafe by principle.
+- Patch: loop moved to a dedicated worktree (`aegis-loop`, branch `loop/integration`);
+  integration done at ref level (update-ref verified fast-forward); harness heuristic
+  `h_readme` updated to accept the user's README+WHY.md doc split.
+- Prevention: eval-suite runs from the loop worktree only; ledger Decision Log
+  records ref-level integration; rule adopted — never checkout/reset inside another
+  session's worktree, only fast-forward-verified `update-ref` on main.
+- Status: CLOSED
+
 <!-- Append new entries below. Never rewrite or delete existing entries. -->

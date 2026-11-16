@@ -136,6 +136,9 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | 5 | 2 | Phase order adjusted: eval suite (Phase 9 core) built first so every later phase lands with measurable gates | goal.md Evolve capability; init.md §5 rule 3 (gates before capability) |
 | 6 | 3 | Contracts enforce the epistemic ladder structurally via allOf if/then guards (confirmed⇒reproduction, hypothesis⇒plan, rejected⇒evidence) — plus stdlib mini-validator + fixtures since jsonschema isn't installed | goal.md Verify; deps unavailable in env, stdlib validator guarantees contracts always checkable |
 | 7 | 3 | Added `contracts.fixtures-validate` heuristic (29→30) so schema/fixture drift fails the suite | E-002 prevention; registry+runner updated in same commit per drift rule |
+| 8 | 3 | Integrated parallel-session work into main at ref level: contracts (016e355) includes vision/ curriculum (P01–P10), populated `.agents/curriculum.json`, rainbow README + WHY.md doc split | User worked concurrently in separate worktrees; ff-verified update-ref is the safe integration path under concurrency |
+| 9 | 3 | Loop relocated to dedicated worktree `aegis-loop` (branch `loop/integration`) | E-003; exclusive-custody working tree ends branch-switch races |
+| 10 | 3 | `harness.readme-architecture` heuristic now checks README.md + WHY.md as one doc set | User split docs deliberately (rainbow front door + detailed WHY.md); harness adapts to user's structure |
 
 ## Blocker Log (append-only)
 

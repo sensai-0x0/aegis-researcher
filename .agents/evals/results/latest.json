@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-11-17T00:53:43+1030",
-  "commit": "7ca0201",
+  "timestamp": "2026-11-17T00:59:25+1030",
+  "commit": "016e355",
   "overall": {
     "passed": 20,
     "total": 30,
@@ -74,7 +74,7 @@
       "id": "harness.readme-architecture",
       "capability": "harness",
       "passed": true,
-      "detail": "architecture + epistemic model documented"
+      "detail": "architecture + epistemic model documented (README+WHY)"
     },
     {
       "id": "harness.rules-nonempty",
@@ -212,13 +212,13 @@
       "id": "process.progress-ledger-current",
       "capability": "process",
       "passed": true,
-      "detail": "iter=2, phase=PHASE-2 (contracts) \u2014 Phase 1 complete, harness gate 7/7 green"
+      "detail": "iter=3, phase=PHASE-3 (core) \u2014 Phase 2 complete, contracts gate 7/7 green"
     },
     {
       "id": "process.decision-log-appended",
       "capability": "process",
       "passed": true,
-      "detail": "4 entries"
+      "detail": "10 entries"
     },
     {
       "id": "process.errors-ledger",

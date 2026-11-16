@@ -103,9 +103,12 @@ def h_pyproject() -> tuple[bool, str]:
 
 
 def h_readme() -> tuple[bool, str]:
-    t = read("README.md")
-    if not t:
-        return False, "README.md missing"
+    # The user split docs: README.md = brief front door, WHY.md = detailed picture.
+    # Epistemic/architecture content may live in either.
+    parts = [(read("README.md") or ""), (read("WHY.md") or "")]
+    t = "\n".join(parts)
+    if not t.strip():
+        return False, "README.md and WHY.md missing"
     low = t.lower()
     checks = {
         "architecture": "architecture" in low or "data flow" in low or "──" in t or "→" in t,
@@ -113,8 +116,8 @@ def h_readme() -> tuple[bool, str]:
     }
     failed = [k for k, v in checks.items() if not v]
     if failed:
-        return False, f"missing: {failed}"
-    return True, "architecture + epistemic model documented"
+        return False, f"missing (across README/WHY): {failed}"
+    return True, "architecture + epistemic model documented (README+WHY)"
 
 
 def _frontmatter(rel: str, required_keys: tuple[str, ...]) -> tuple[bool, str]:
