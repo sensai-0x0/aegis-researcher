@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "policy": "Ratchet protocol: every gate below may only increase over time. tools/ci/check_ratchet.py fails CI on any pull request that lowers a gate relative to the base branch. Raising a gate is always allowed and encouraged; lowering one requires a human-approved exception recorded in the .agents/evals/progress.md decision log — and even then the ratchet check blocks it until the exception is itself reviewed in a merge to the default branch.",
+  "coverage": {
+    "min_line_percent": 0
+  },
+  "evals": {
+    "min_overall_rate": 0.0
+  },
+  "notes": {
+    "coverage": "Line-coverage floor for core/, graph/, adapters/ and workers/ (pytest-cov). Start at 0 because the suite is written test-first; raise as modules land under test.",
+    "evals": "Minimum overall heuristic pass rate reported by run_evals.py. Suite-level gates live in .agents/evals/eval-suite/heuristics.json — that file is the single source of truth for per-suite gates and is also ratcheted."
+  }
+}
