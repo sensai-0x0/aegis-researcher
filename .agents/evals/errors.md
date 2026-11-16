@@ -90,4 +90,20 @@
 - Prevention: covered by `test_lifecycle`; transition table is exported and testable.
 - Status: CLOSED
 
+### E-006 — three dev-time slips caught by the loop's own self-check (iter 5)
+- Date / Iteration: 2026-11-17 / 5
+- Capability: contracts (build quality)
+- Symptom: (1) MCP server syntax error (unbalanced braces in JSON-RPC handler);
+  (2) `workers/__init__.py` factory edit landed mid-line, corrupting indentation;
+  (3) inventory worker counted only top-level files, missing directory components;
+  test line itself also contained a sloppy truthiness expression.
+- Root cause: fast batch editing without immediate verification; test assertion
+  written to satisfy intent rather than observe behavior.
+- Patch: all four fixed; each was caught within the same iteration by the §5
+  self-check step (import/test run), never by eval alone.
+- Prevention: self-check (step 4b) runs full test suite on every code-touching
+  iteration — regression suite replays these as `tests/test_workers.py` and
+  `tests/test_adapters.py`.
+- Status: CLOSED
+
 <!-- Append new entries below. Never rewrite or delete existing entries. -->

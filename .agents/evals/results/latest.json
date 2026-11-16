@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-17T01:06:26+1030",
-  "commit": "6a5897b",
+  "timestamp": "2026-11-17T10:05:54+1030",
+  "commit": "bf37a9a",
   "overall": {
-    "passed": 25,
+    "passed": 27,
     "total": 30,
-    "rate": 0.833
+    "rate": 0.9
   },
   "suites": {
     "safety": {
@@ -50,11 +50,11 @@
       "met": false
     },
     "research": {
-      "passed": 0,
+      "passed": 2,
       "total": 2,
-      "rate": 0.0,
+      "rate": 1.0,
       "gate": 0.5,
-      "met": false
+      "met": true
     }
   },
   "heuristics": [
@@ -212,13 +212,13 @@
       "id": "process.progress-ledger-current",
       "capability": "process",
       "passed": true,
-      "detail": "iter=3, phase=PHASE-3 (core) \u2014 Phase 2 complete, contracts gate 7/7 green"
+      "detail": "iter=5, phase=PHASE-8 next (ui/orb, reports, E2E demo) \u2014 Phases 4, 5, 7 complete; graph externally owned"
     },
     {
       "id": "process.decision-log-appended",
       "capability": "process",
       "passed": true,
-      "detail": "10 entries"
+      "detail": "15 entries"
     },
     {
       "id": "process.errors-ledger",
@@ -229,14 +229,14 @@
     {
       "id": "research.test-cases-present",
       "capability": "research",
-      "passed": false,
-      "detail": "no research test cases"
+      "passed": true,
+      "detail": "2 cases"
     },
     {
       "id": "research.expected-results",
       "capability": "research",
-      "passed": false,
-      "detail": "no expected results"
+      "passed": true,
+      "detail": "1 ground truths"
     }
   ]
 }
