@@ -32,4 +32,16 @@
   tagged with the divergence they capture.
 - Status: PATCHED (awaiting human-populated curriculum to CLOSE)
 
+### E-002 — negative fixture naming didn't map to its schema
+- Date / Iteration: 2026-11-17 / 3
+- Capability: contracts
+- Symptom: `negative-finding-no-repro.instance.json` derived a nonexistent schema
+  path (`finding-no-repro.schema.json`) and crashed the validator.
+- Root cause: ad-hoc fixture naming; stem-to-schema mapping convention was undefined.
+- Patch: naming convention fixed — `negative-<base>.instance.json` validates against
+  `<base>.schema.json`; fixture renamed to `negative-finding.instance.json`.
+- Prevention: `contracts.fixtures-validate` heuristic added to the eval suite (runs
+  the validator; any fixture that can't resolve to a schema fails).
+- Status: CLOSED
+
 <!-- Append new entries below. Never rewrite or delete existing entries. -->

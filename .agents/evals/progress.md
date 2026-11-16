@@ -5,12 +5,12 @@
 
 ## Meta
 
-- **Loop iteration:** 2
-- **Last updated:** 2026-11-17 (iter 2)
-- **Current phase:** PHASE-2 (contracts) — Phase 1 complete, harness gate 7/7 green
-- **Next queued action:** Phase 2: author 5 JSON Schemas (draft 2020-12) + fixtures + validator
+- **Loop iteration:** 3
+- **Last updated:** 2026-11-17 (iter 3)
+- **Current phase:** PHASE-3 (core) — Phase 2 complete, contracts gate 7/7 green
+- **Next queued action:** Phase 3: `core/scope.py` → `policy.py` → `audit.py` → `mission.py` → `orchestrator.py` + tests
 - **Blockers:** none
-- **Latest eval run:** 12/29 (41%) — harness 7/7 ✅, process 3/3 ✅; red gates are Phases 2,3,5,6,7 work
+- **Latest eval run:** 20/30 (67%) — contracts 7/7 ✅, harness ✅, process ✅; safety needs Phase 3
 
 ## Phase Checklist
 
@@ -40,11 +40,11 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Item | Status | Evidence / Notes |
 |------|--------|------------------|
-| `contracts/mission.schema.json` | [ ] | |
-| `contracts/run.schema.json` | [ ] | |
-| `contracts/observation.schema.json` | [ ] | |
-| `contracts/finding.schema.json` | [ ] | |
-| `contracts/artifact.schema.json` | [ ] | |
+| `contracts/mission.schema.json` | [x] | iter 3 — targets/exclusions/rules/constraints/approvers; deny-by-default documented |
+| `contracts/run.schema.json` | [x] | iter 3 — policy_decisions incl. approver for consequential; workers carry hypotheses |
+| `contracts/observation.schema.json` | [x] | iter 3 — raw_evidence minItems 1; no claim fields; method fidelity confidence |
+| `contracts/finding.schema.json` | [x] | iter 3 — epistemic ladder + if/then guards (confirmed⇒reproduction, rejected⇒evidence) |
+| `contracts/artifact.schema.json` | [x] | iter 3 — sha256 = artifact id; append-only custody chain |
 
 ### Phase 3 — Core
 
@@ -119,10 +119,10 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Metric | Target | Current |
 |--------|--------|---------|
-| Files populated (of 34 + harness) | 100% | 15 |
-| Contracts passing schema self-validation | 5/5 | 0 |
-| Eval suites defined / passing | 7/7 | 2/7 (harness, process) |
-| Case pass rate (latest run) | ≥ 90% | 41% (in-progress build) |
+| Files populated (of 34 + harness) | 100% | 21 (+fixtures/validator) |
+| Contracts passing schema self-validation | 5/5 | 5/5 (+1 negative guard) |
+| Eval suites defined / passing | 7/7 | 3/7 (contracts, harness, process) |
+| Case pass rate (latest run) | ≥ 90% | 67% (in-progress build) |
 | E2E verified finding produced | 1 | 0 |
 
 ## Decision Log (append-only)
@@ -133,6 +133,9 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | 2 | 1 | Built stdlib-only heuristic eval suite at `.agents/evals/eval-suite/` (29 heuristics, 7 suites with gates) | Python env has no third-party packages; stdlib runner guarantees the evals always run. Registry/runner drift fails by design |
 | 3 | 1 | curriculum.json is empty (0 bytes) → goal.md ↔ progress.md is the improvement comparator; divergences logged here | E-001 in errors.md; curriculum to be derived from logged decisions |
 | 4 | 1 | Branch strategy: one `feat/<phase>` branch per phase, `--no-ff` merge to main, prune after merge | Matches init.md §5 loop; keeps phase boundaries reviewable |
+| 5 | 2 | Phase order adjusted: eval suite (Phase 9 core) built first so every later phase lands with measurable gates | goal.md Evolve capability; init.md §5 rule 3 (gates before capability) |
+| 6 | 3 | Contracts enforce the epistemic ladder structurally via allOf if/then guards (confirmed⇒reproduction, hypothesis⇒plan, rejected⇒evidence) — plus stdlib mini-validator + fixtures since jsonschema isn't installed | goal.md Verify; deps unavailable in env, stdlib validator guarantees contracts always checkable |
+| 7 | 3 | Added `contracts.fixtures-validate` heuristic (29→30) so schema/fixture drift fails the suite | E-002 prevention; registry+runner updated in same commit per drift rule |
 
 ## Blocker Log (append-only)
 

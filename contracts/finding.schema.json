@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/finding.schema.json",
+  "title": "AEGIS Finding",
+  "description": "A record on the epistemic ladder: observation -> hypothesis -> confirmed -> rejected. Promotion and rejection both require evidence. A confirmed finding without reproduction is a contract violation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "finding_id",
+    "title",
+    "status",
+    "affected_component",
+    "evidence",
+    "created_at",
+    "provenance"
+  ],
+  "properties": {
+    "finding_id": { "type": "string", "format": "uuid" },
+    "title": { "type": "string", "minLength": 5 },
+    "status": {
+      "enum": ["observation", "hypothesis", "confirmed", "rejected"],
+      "description": "The epistemic ladder. Transitions require evidence (see allOf guards below)."
+    },
+    "affected_component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identifier"],
+      "properties": {
+        "identifier": { "type": "string" },
+        "version": { "type": ["string", "null"] },
+        "anchors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Precise locations: file:line, function symbol, firmware offset, endpoint path."
+        }
+      }
+    },
+    "severity": {
+      "enum": ["info", "low", "medium", "high", "critical", null],
+      "description": "Null until confirmed. Severity must be justified via severity_justification."
+    },
+    "severity_justification": {
+      "type": ["string", "null"],
+      "description": "Checkable argument from the cited evidence to the assigned severity."
+    },
+    "claim": {
+      "type": ["string", "null"],
+      "minLength": 10,
+      "description": "Required for hypothesis/confirmed/rejected: the specific weakness claimed or refuted."
+    },
+    "rationale": {
+      "type": ["string", "null"],
+      "description": "Why the hypothesis is plausible (required for hypothesis status)."
+    },
+    "verification_plan": {
+      "type": ["string", "null"],
+      "description": "How this hypothesis will be confirmed or refuted (required for hypothesis status)."
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Artifact IDs supporting the current status. Evidence for rejections is preserved here too.",
+      "items": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+    },
+    "reproduction": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Numbered, machine-checkable reproduction steps. Required for confirmed status."
+    },
+    "root_cause": {
+      "type": ["string", "null"],
+      "description": "Required before a confirmed finding is final."
+    },
+    "mitigation": {
+      "type": ["string", "null"],
+      "description": "Validated mitigation. Required before a confirmed finding is final."
+    },
+    "lessons_learned": {
+      "type": ["string", "null"],
+      "description": "What this finding teaches the platform. Feeds graph Lesson nodes (Improve/Evolve)."
+    },
+    "reviewed_by": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Agents/humans that reviewed this record."
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["originated_by"],
+      "properties": {
+        "originated_by": { "type": "string" },
+        "triaged_by": { "type": ["string", "null"] },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "hypothesis" } } },
+      "then": { "required": ["claim", "rationale", "verification_plan"] }
+    },
+    {
+      "if": { "properties": { "status": { "const": "confirmed" } } },
+      "then": {
+        "required": ["claim", "reproduction", "severity", "severity_justification"],
+        "properties": {
+          "reproduction": { "minItems": 1 },
+          "severity": { "enum": ["info", "low", "medium", "high", "critical"] }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "rejected" } } },
+      "then": { "required": ["claim", "evidence"], "properties": { "evidence": { "minItems": 1 } } }
+    }
+  ]
+}

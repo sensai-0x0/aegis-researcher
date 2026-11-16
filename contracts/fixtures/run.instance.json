@@ -1,0 +1,41 @@
+{
+  "run_id": "22222222-2222-4222-8222-222222222222",
+  "mission_id": "11111111-1111-4111-8111-111111111111",
+  "adapter": { "name": "cli", "version": "0.1.0" },
+  "started_at": "2026-11-17T01:00:00Z",
+  "ended_at": null,
+  "status": "running",
+  "workers_invoked": [
+    {
+      "worker": "system_inventory",
+      "purpose": "enumerate components and trust boundaries of gw-service",
+      "hypothesis": "gw-service exposes an admin interface on 127.0.0.1:9090 that is reachable via the public listener",
+      "started_at": "2026-11-17T01:00:05Z",
+      "ended_at": null
+    }
+  ],
+  "policy_decisions": [
+    {
+      "action_class": "read_only",
+      "decision": "allowed",
+      "approver": null,
+      "timestamp": "2026-11-17T01:00:02Z",
+      "reason": "banner capture on authorized application target"
+    },
+    {
+      "action_class": "consequential",
+      "decision": "approved",
+      "approver": "operator-primary",
+      "timestamp": "2026-11-17T01:05:00Z",
+      "reason": "approved test-account creation in synthetic lab"
+    }
+  ],
+  "artifacts": [
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  ],
+  "audit_ref": "audit-chain:000042",
+  "provenance": {
+    "initiated_by": "orchestrator",
+    "notes": "synthetic run fixture"
+  }
+}
