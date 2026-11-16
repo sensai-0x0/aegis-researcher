@@ -1,0 +1,40 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Environment / secrets ---
+.env
+.env.*
+*.pem
+*.key
+
+# --- AEGIS evidence: objects are content-addressed local blobs; manifests are tracked ---
+evidence/objects/**
+!evidence/objects/README.md
+!evidence/objects/.gitkeep
+
+# --- Reports: rendered output not tracked; templates are ---
+reports/*.pdf
+reports/*.html
+
+# --- Graph: local dumps ---
+graph/*.dump
+graph/export/**
+
+# --- Evals: raw runner output (history.jsonl is tracked; raw captures are not) ---
+.agents/evals/results/raw/
+.agents/evals/results/latest.json
+
+# --- OS / editor ---
+.DS_Store
+.idea/
+.vscode/

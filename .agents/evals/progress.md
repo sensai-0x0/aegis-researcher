@@ -5,12 +5,12 @@
 
 ## Meta
 
-- **Loop iteration:** 1
-- **Last updated:** 2026-11-17 (iter 1)
-- **Current phase:** PHASE-1 (harness) — eval suite built first per §5 rule
-- **Next queued action:** Phase 1 population: `CLAUDE.md`, `pyproject.toml`, `README.md`, `.gitignore`, `.claude/settings.json`
+- **Loop iteration:** 2
+- **Last updated:** 2026-11-17 (iter 2)
+- **Current phase:** PHASE-2 (contracts) — Phase 1 complete, harness gate 7/7 green
+- **Next queued action:** Phase 2: author 5 JSON Schemas (draft 2020-12) + fixtures + validator
 - **Blockers:** none
-- **Latest eval run:** 3/29 (10%) — all gates red (expected baseline; see `.agents/evals/results/latest.json`)
+- **Latest eval run:** 12/29 (41%) — harness 7/7 ✅, process 3/3 ✅; red gates are Phases 2,3,5,6,7 work
 
 ## Phase Checklist
 
@@ -20,21 +20,21 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Item | Status | Evidence / Notes |
 |------|--------|------------------|
-| `CLAUDE.md` (harness contract, routing, constraints) | [ ] | |
-| `pyproject.toml` (deps, tooling, entry points) | [ ] | |
-| `README.md` (project overview, architecture) | [ ] | |
-| `.gitignore` (Python, evidence artifacts, secrets) | [ ] | |
-| `.claude/settings.json` (permissions, allowed tools) | [ ] | |
-| `.claude/rules/research.md` | [ ] | |
-| `.claude/rules/evidence.md` | [ ] | |
-| `.claude/rules/scope.md` | [ ] | |
-| `.claude/skills/inventory/SKILL.md` | [ ] | |
-| `.claude/skills/source-review/SKILL.md` | [ ] | |
-| `.claude/skills/finding-triage/SKILL.md` | [ ] | |
-| `.claude/agents/systems-analyst.md` | [ ] | |
-| `.claude/agents/source-analyst.md` | [ ] | |
-| `.claude/agents/reviewer.md` | [ ] | |
-| `.claude/agents/evidence-curator.md` | [ ] | |
+| `CLAUDE.md` (harness contract, routing, constraints) | [x] | iter 2 — 3.0KB; mission, repo map, epistemic ladder, routing table, loop pointers |
+| `pyproject.toml` (deps, tooling, entry points) | [x] | iter 2 — PEP 621, jsonschema dep, aegis CLI entry, ruff/pytest config |
+| `README.md` (project overview, architecture) | [x] | iter 2 — architecture diagram + epistemic model table + safety model |
+| `.gitignore` (Python, evidence artifacts, secrets) | [x] | iter 2 — evidence/objects ignored, manifests tracked, results raw ignored |
+| `.claude/settings.json` (permissions, allowed tools) | [x] | iter 2 — allow/ask/deny tiers; goal.md edits denied; force-push denied |
+| `.claude/rules/research.md` | [x] | iter 2 — hypothesis-first; negative results recorded; failure examples |
+| `.claude/rules/evidence.md` | [x] | iter 2 — sha256 content addressing, custody, immutability, failure examples |
+| `.claude/rules/scope.md` | [x] | iter 2 — resolve-before-contact, deny-by-default, approval gating |
+| `.claude/skills/inventory/SKILL.md` | [x] | iter 2 — Understand; components/deps/trust boundaries; coverage gaps |
+| `.claude/skills/source-review/SKILL.md` | [x] | iter 2 — Discover; entry→sink paths; anchored hypotheses + verification plans |
+| `.claude/skills/finding-triage/SKILL.md` | [x] | iter 2 — Verify/Improve; ladder classification + transition conditions |
+| `.claude/agents/systems-analyst.md` | [x] | iter 2 — Understand lead; hand-off contracts to analyst/curator |
+| `.claude/agents/source-analyst.md` | [x] | iter 2 — Discover lead; hypotheses only, build on graph |
+| `.claude/agents/reviewer.md` | [x] | iter 2 — Verify/Improve gate; adversarial, blocks inflation |
+| `.claude/agents/evidence-curator.md` | [x] | iter 2 — evidence integrity + Connect; veto power over broken chains |
 
 ### Phase 2 — Contracts (JSON Schemas)
 
@@ -119,10 +119,10 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Metric | Target | Current |
 |--------|--------|---------|
-| Files populated (of 34 + harness) | 100% | 0 |
+| Files populated (of 34 + harness) | 100% | 15 |
 | Contracts passing schema self-validation | 5/5 | 0 |
-| Eval suites defined / passing | 4/4 | 0/0 |
-| Case pass rate (latest run) | ≥ 90% | n/a |
+| Eval suites defined / passing | 7/7 | 2/7 (harness, process) |
+| Case pass rate (latest run) | ≥ 90% | 41% (in-progress build) |
 | E2E verified finding produced | 1 | 0 |
 
 ## Decision Log (append-only)
