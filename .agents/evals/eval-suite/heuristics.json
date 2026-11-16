@@ -24,6 +24,7 @@
     { "id": "contracts.observation-evidence",  "capability": "contracts", "description": "Observations require at least one evidence reference (minItems >= 1)." },
     { "id": "contracts.artifact-hash",         "capability": "contracts", "description": "Artifacts require a sha256 content address." },
     { "id": "contracts.no-open-objects",       "capability": "contracts", "description": "Schemas forbid undeclared properties (additionalProperties: false)." },
+    { "id": "contracts.fixtures-validate",     "capability": "contracts", "description": "Every fixture validates against its schema; negative fixtures are rejected by it." },
     { "id": "safety.no-hardcoded-secrets",     "capability": "safety",    "description": "No credential-shaped strings in tracked files (heuristic patterns)." },
     { "id": "safety.no-undocumented-addresses","capability": "safety",    "description": "IPv4 literals appear only in documentation/private/loopback ranges." },
     { "id": "safety.scope-deny-by-default",    "capability": "safety",    "description": "core/scope.py implements deny-by-default authorization with assert_authorized." },

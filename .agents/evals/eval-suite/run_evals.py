@@ -226,6 +226,17 @@ def h_artifact_hash() -> tuple[bool, str]:
     return ("sha256" in t and "required" in t), "sha256 required" if "sha256" in t else "artifact schema missing sha256"
 
 
+def h_fixtures_validate() -> tuple[bool, str]:
+    proc = subprocess.run(
+        [sys.executable, str(ROOT / "contracts" / "validate_fixtures.py")],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+    if proc.returncode != 0:
+        return False, proc.stdout.strip()[-300:] or proc.stderr.strip()[-300:]
+    n = proc.stdout.count("[PASS]")
+    return True, f"{n} fixture expectations hold"
+
+
 def h_contracts_closed() -> tuple[bool, str]:
     fails = [n for n, t in _load_schemas().items()
              if t is not None and "additionalProperties" not in t]
@@ -415,6 +426,7 @@ CHECKS = {
     "contracts.observation-evidence": h_observation_evidence,
     "contracts.artifact-hash": h_artifact_hash,
     "contracts.no-open-objects": h_contracts_closed,
+    "contracts.fixtures-validate": h_fixtures_validate,
     "safety.no-hardcoded-secrets": h_no_secrets,
     "safety.no-undocumented-addresses": h_no_real_addresses,
     "safety.scope-deny-by-default": h_scope_deny_default,

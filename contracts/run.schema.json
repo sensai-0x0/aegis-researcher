@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/run.schema.json",
+  "title": "AEGIS Run",
+  "description": "One orchestrated execution of research activity against an authorized mission. Links workers, policy decisions, artifacts and the audit trail.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "mission_id",
+    "adapter",
+    "started_at",
+    "status",
+    "workers_invoked",
+    "policy_decisions",
+    "artifacts",
+    "audit_ref",
+    "provenance"
+  ],
+  "properties": {
+    "run_id": { "type": "string", "format": "uuid" },
+    "mission_id": { "type": "string", "format": "uuid", "description": "FK to mission. A run without an active authorized mission is invalid." },
+    "adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "enum": ["claude_code", "codex", "mcp", "cli"] },
+        "version": { "type": "string" }
+      }
+    },
+    "started_at": { "type": "string", "format": "date-time" },
+    "ended_at": { "type": ["string", "null"], "format": "date-time" },
+    "status": { "enum": ["planned", "authorized", "running", "collecting", "concluded", "aborted"] },
+    "workers_invoked": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["worker", "purpose", "hypothesis"],
+        "properties": {
+          "worker": {
+            "enum": ["system_inventory", "static_analysis", "application_testing", "fuzzing", "binary_analysis", "firmware", "qemu", "renode"]
+          },
+          "purpose": { "type": "string" },
+          "hypothesis": { "type": "string", "description": "Rule research.md: every invocation serves a stated hypothesis. Empty = fishing expedition = invalid." },
+          "started_at": { "type": "string", "format": "date-time" },
+          "ended_at": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    },
+    "policy_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action_class", "decision", "timestamp", "reason"],
+        "properties": {
+          "action_class": { "enum": ["read_only", "intrusive", "consequential"] },
+          "decision": { "enum": ["allowed", "denied", "approved", "pending_approval"] },
+          "approver": { "type": ["string", "null"], "description": "Required non-null for approved consequential actions." },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "description": "Artifact IDs produced by this run. Referenced by id; never embedded.",
+      "items": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+    },
+    "audit_ref": { "type": "string", "description": "Anchor into the hash-chained audit log covering this run's decisions." },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["initiated_by"],
+      "properties": {
+        "initiated_by": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

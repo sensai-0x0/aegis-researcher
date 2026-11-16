@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-17T00:50:02+1030",
-  "commit": "6d33031",
+  "timestamp": "2026-11-17T00:53:43+1030",
+  "commit": "7ca0201",
   "overall": {
-    "passed": 12,
-    "total": 29,
-    "rate": 0.414
+    "passed": 20,
+    "total": 30,
+    "rate": 0.667
   },
   "suites": {
     "safety": {
@@ -15,11 +15,11 @@
       "met": false
     },
     "contracts": {
-      "passed": 0,
-      "total": 6,
-      "rate": 0.0,
+      "passed": 7,
+      "total": 7,
+      "rate": 1.0,
       "gate": 1.0,
-      "met": false
+      "met": true
     },
     "process": {
       "passed": 3,
@@ -36,9 +36,9 @@
       "met": true
     },
     "evidence": {
-      "passed": 0,
+      "passed": 1,
       "total": 3,
-      "rate": 0.0,
+      "rate": 0.333,
       "gate": 0.9,
       "met": false
     },
@@ -103,38 +103,44 @@
     {
       "id": "contracts.all-parse",
       "capability": "contracts",
-      "passed": false,
-      "detail": "mission: Expecting value: line 1 column 1 (char 0); run: Expecting value: line 1 column 1 (char 0); observation: Expecting value: line 1 column 1 (char 0); finding: Expecting value: line 1 column 1 (char 0); artifact: Expecting value: line 1 column 1 (char 0)"
+      "passed": true,
+      "detail": "5/5 parse"
     },
     {
       "id": "contracts.draft-2020-12",
       "capability": "contracts",
-      "passed": false,
-      "detail": "mission not draft 2020-12; run not draft 2020-12; observation not draft 2020-12; finding not draft 2020-12; artifact not draft 2020-12"
+      "passed": true,
+      "detail": "all draft 2020-12"
     },
     {
       "id": "contracts.epistemic-ladder",
       "capability": "contracts",
-      "passed": false,
-      "detail": "missing statuses: ['observation', 'hypothesis', 'confirmed', 'rejected']"
+      "passed": true,
+      "detail": "epistemic ladder enforced"
     },
     {
       "id": "contracts.observation-evidence",
       "capability": "contracts",
-      "passed": false,
-      "detail": "observation schema missing"
+      "passed": true,
+      "detail": "evidence refs required"
     },
     {
       "id": "contracts.artifact-hash",
       "capability": "contracts",
-      "passed": false,
-      "detail": "artifact schema missing sha256"
+      "passed": true,
+      "detail": "sha256 required"
     },
     {
       "id": "contracts.no-open-objects",
       "capability": "contracts",
-      "passed": false,
-      "detail": "mission not closed; run not closed; observation not closed; finding not closed; artifact not closed"
+      "passed": true,
+      "detail": "all schemas closed"
+    },
+    {
+      "id": "contracts.fixtures-validate",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "6 fixture expectations hold"
     },
     {
       "id": "safety.no-hardcoded-secrets",
@@ -181,8 +187,8 @@
     {
       "id": "evidence.observation-no-claims",
       "capability": "evidence",
-      "passed": false,
-      "detail": "observation schema missing"
+      "passed": true,
+      "detail": "facts only"
     },
     {
       "id": "graph.constraints-defined",
