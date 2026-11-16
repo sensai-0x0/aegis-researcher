@@ -5,11 +5,12 @@
 
 ## Meta
 
-- **Loop iteration:** 0
-- **Last updated:** —
-- **Current phase:** NOT-STARTED
-- **Next queued action:** Read `.agents/plans/init.md` §3 and begin Phase 1 (harness population)
+- **Loop iteration:** 1
+- **Last updated:** 2026-11-17 (iter 1)
+- **Current phase:** PHASE-1 (harness) — eval suite built first per §5 rule
+- **Next queued action:** Phase 1 population: `CLAUDE.md`, `pyproject.toml`, `README.md`, `.gitignore`, `.claude/settings.json`
 - **Blockers:** none
+- **Latest eval run:** 3/29 (10%) — all gates red (expected baseline; see `.agents/evals/results/latest.json`)
 
 ## Phase Checklist
 
@@ -129,6 +130,9 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | Date | Iteration | Decision | Rationale |
 |------|-----------|----------|-----------|
 | 1 | 0 | Normalized `.agents/eval` → `.agents/evals/` | Single source of truth for eval harness + progress/goal |
+| 2 | 1 | Built stdlib-only heuristic eval suite at `.agents/evals/eval-suite/` (29 heuristics, 7 suites with gates) | Python env has no third-party packages; stdlib runner guarantees the evals always run. Registry/runner drift fails by design |
+| 3 | 1 | curriculum.json is empty (0 bytes) → goal.md ↔ progress.md is the improvement comparator; divergences logged here | E-001 in errors.md; curriculum to be derived from logged decisions |
+| 4 | 1 | Branch strategy: one `feat/<phase>` branch per phase, `--no-ff` merge to main, prune after merge | Matches init.md §5 loop; keeps phase boundaries reviewable |
 
 ## Blocker Log (append-only)
 
