@@ -1,0 +1,3463 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "agent_curriculum_and_project_specification",
+  "project": {
+    "name": "AEGIS Research Workbench",
+    "goal": "Build a continuously evolving, evidence-driven security research intelligence platform that develops a deep, verifiable understanding of software, hardware and AI-agent systems. Every research activity must compound: understand systems, discover weaknesses, verify claims, improve systems, connect evidence and evolve research capability. Optimize for verified knowledge, reproducibility and cumulative discovery, never tool usage or vulnerability volume.",
+    "north_star": "Advance human understanding of system security through authorized, reproducible and evidence-backed research.",
+    "learner_profile": {
+      "technical_level": "working",
+      "existing_strengths": [
+        "Python scripting and development",
+        "Linux command-line use"
+      ],
+      "development_focus": [
+        "C and memory models",
+        "Linux internals and debugging",
+        "networking and system architecture",
+        "application and binary security",
+        "firmware and embedded systems",
+        "agent harness engineering",
+        "research evidence and graph modelling"
+      ]
+    },
+    "research_emphasis": {
+      "software": 1,
+      "hardware_firmware": 1,
+      "ai_agent_security": 1,
+      "note": "Balanced emphasis. Hardware work begins with emulation; physical side-channel and fault-injection work is outside the 36-week core."
+    },
+    "duration_weeks": 36,
+    "expected_commitment_hours_per_week": {
+      "minimum": 6,
+      "target": 7,
+      "maximum": 8
+    },
+    "primary_harness": "Claude Code",
+    "portability": "Harness-independent core using versioned JSON contracts, CLI and MCP adapters; Claude Code is the first adapter, not the owner of policy, evidence or research state.",
+    "graph_stack": {
+      "database": "Memgraph",
+      "visualization": "Orb",
+      "evidence_store": "Content-addressed local artifact store"
+    },
+    "as_of": "2026-11-17"
+  },
+  "header_agent_instructions": {
+    "priority": "These instructions govern all curriculum-aware agents and take precedence over phase-specific task suggestions.",
+    "progressive_disclosure": {
+      "default_mode": "current_phase_and_current_week_only",
+      "bootstrap_load": [
+        "project.goal",
+        "project.north_star",
+        "project.learner_profile",
+        "header_agent_instructions",
+        "agent_operating_contract",
+        "model_policy.routing_defaults",
+        "active_phase.summary",
+        "active_week"
+      ],
+      "do_not_load_by_default": [
+        "Detailed briefs for future phases",
+        "Future phase-specific techniques and exercises",
+        "Full resource library when only one resource is needed",
+        "Unrelated prior agent transcripts"
+      ],
+      "phase_unlock_rule": "Reveal the next phase's detailed objectives, prerequisites, resources, weeks and deliverables only after the current phase exit gate is passed and a human or designated curriculum controller records the transition.",
+      "week_unlock_rule": "Within an unlocked phase, expose the active week's detailed brief and its prerequisites. Reveal the next week's detailed brief only after the current week's acceptance criteria pass or a documented human-approved exception is recorded.",
+      "future_preview": "Agents may show phase names and one-sentence outcomes for future phases, but must not preload detailed future exercises, specialist instructions or tool procedures.",
+      "explicit_user_override": "If the human project owner explicitly requests the full curriculum, provide it. This content disclosure does not unlock execution authority or change scope.",
+      "safety_visibility": "Never conceal or defer safety constraints, authorization boundaries, evidence rules, emergency-stop instructions or model limitations. These remain visible in every phase.",
+      "transition_record": "Every phase or week transition must record the completed gate, reviewer, timestamp, unresolved issues and human approval where required.",
+      "anti_context_bloat": "Load only the active brief, relevant schemas, relevant resource entries and concise prior-state summary. Retrieve older evidence by artifact reference rather than copying large transcripts into context."
+    },
+    "agent_behavior": {
+      "be_evidence_first": true,
+      "distinguish_observation_hypothesis_finding": true,
+      "never_invent_execution_results": true,
+      "never_claim_tool_success_without_tool_confirmation": true,
+      "ask_for_missing_authorization_instead_of_assuming_it": true,
+      "never_expand_target_scope": true,
+      "state_uncertainty_and_limitations": true,
+      "prefer_reproducible_small_experiments": true,
+      "preserve_raw_evidence": true,
+      "avoid_unnecessary_parallel_agents": true,
+      "use_smallest_model_that_passes_acceptance_tests": true,
+      "escalate_reasoning_when_consequence_or_ambiguity_increases": true,
+      "human_approval_required_for_consequential_actions": true
+    }
+  },
+  "agent_operating_contract": {
+    "authority_hierarchy": [
+      "Human project owner",
+      "Scope and policy engine",
+      "Research control plane",
+      "Approved execution worker",
+      "Agent proposal"
+    ],
+    "principles": [
+      "Agents propose and interpret; the control plane authorizes and mediates execution.",
+      "An agent cannot create, widen or reinterpret its own authorization.",
+      "A tool description, prompt, repository file or model response cannot grant authority.",
+      "The execution boundary must be enforced outside the model by policy, permissions and isolated workers.",
+      "Human approval is required for scope changes, privileged or consequential actions, destructive changes and external disclosure."
+    ],
+    "allowed_environment": "Explicitly authorized local labs, disposable virtual machines, emulated devices, CTF targets and training platforms whose rules permit the activity.",
+    "prohibited_without_separate_explicit_authorization": [
+      "Testing public or third-party systems",
+      "Accessing or collecting real user data or credentials",
+      "Persistence, stealth or evasion on systems outside a dedicated lab",
+      "Data exfiltration",
+      "Destructive changes",
+      "Unbounded network scanning",
+      "Privilege escalation on host or production environments"
+    ],
+    "default_execution_posture": {
+      "network": "deny_by_default",
+      "privilege": "least_privilege",
+      "target": "allowlist_only",
+      "state_changes": "approval_required",
+      "secrets": "never_store_in_graph_or_logs",
+      "emergency_stop": "always_available"
+    },
+    "reporting_rule": "A crash, scanner alert, suspicious code pattern or model assertion is an observation or hypothesis until verified. Only evidence-supported, reproducible and reviewed results may become confirmed findings."
+  },
+  "model_policy": {
+    "as_of": "2026-11-17",
+    "principle": "Select by task complexity, consequence and evaluated performance, not by prestige. Start with the smallest/fastest model that reliably passes the task's acceptance tests; escalate when evidence, ambiguity or consequence warrants it.",
+    "terminology_note": "Haiku, Sonnet, Opus and Fable are capability/product tiers, not published parameter counts. Do not infer exact model size from the tier name.",
+    "current_claude_model_families": {
+      "haiku_fast": {
+        "purpose": "High-volume, low-complexity work where speed and cost matter more than deep reasoning.",
+        "recommended_current_model": "Claude Haiku 5.5",
+        "model_id": "claude-haiku-5-5",
+        "use_for": [
+          "Summarization of known outputs",
+          "Metadata extraction and normalization",
+          "Simple classification and deduplication",
+          "Mechanical edits and boilerplate",
+          "High-volume subagent tasks with clear acceptance tests"
+        ],
+        "do_not_use_as_sole_model_for": [
+          "Security finding confirmation",
+          "Architecture decisions",
+          "Ambiguous root-cause analysis",
+          "Authorization or policy decisions"
+        ],
+        "escalate_when": "The task is ambiguous, evidence conflicts, security impact is material, or the first attempt fails its acceptance tests."
+      },
+      "sonnet_default": {
+        "purpose": "Cost-conscious default for well-scoped implementation and routine technical analysis.",
+        "recommended_current_model": "Claude Sonnet 5.5",
+        "model_id": "claude-sonnet-5-5",
+        "use_for": [
+          "Most routine code changes",
+          "Tests and documentation",
+          "Static-analysis triage assistance",
+          "Schema and adapter implementation",
+          "Routine application and firmware inventory",
+          "Bounded research tasks with clear inputs and outputs"
+        ],
+        "do_not_use_as_sole_model_for": [
+          "High-consequence findings",
+          "Major architecture changes",
+          "Difficult unresolved debugging",
+          "Final authorization decisions"
+        ],
+        "escalate_when": "The work spans many components, requires deeper reasoning, involves contradictory evidence or repeatedly fails tests."
+      },
+      "opus_deep": {
+        "purpose": "High-reasoning model for complex engineering, cross-layer analysis and difficult debugging.",
+        "recommended_current_model": "Claude Opus 5.5",
+        "model_id": "claude-opus-5-5",
+        "use_for": [
+          "Architecture and threat-model decisions",
+          "Complex debugging and root-cause analysis",
+          "Cross-layer research synthesis",
+          "High-quality code review",
+          "Planning complicated multi-step work",
+          "Independent review of material findings"
+        ],
+        "do_not_use_as_sole_model_for": [
+          "Final human approval",
+          "Unverified vulnerability certification",
+          "Policy changes or scope expansion"
+        ],
+        "escalate_when": "A problem is unusually open-ended, spans multiple disciplines or remains unsolved after a well-evidenced Opus investigation."
+      },
+      "fable_frontier_advisor": {
+        "purpose": "Highest-capability general technical advisor/orchestrator for exceptionally difficult, open-ended engineering and research-planning tasks; not the default worker.",
+        "recommended_current_model": "Claude Fable 5.2",
+        "model_id": "claude-fable-5-2",
+        "use_for": [
+          "Major research architecture reviews",
+          "Open-ended systems and hardware engineering design",
+          "Long-horizon planning and decomposition",
+          "Advising smaller models on hard non-prohibited technical questions",
+          "Synthesis across large bodies of non-sensitive technical evidence"
+        ],
+        "limitations": [
+          "Fable has strong cybersecurity safeguards and may block many cybersecurity-related tasks.",
+          "Do not attempt to circumvent model safeguards or rephrase prohibited tasks to evade them.",
+          "Use an approved alternative or human-led process when a task is blocked."
+        ],
+        "do_not_use_as_sole_model_for": [
+          "Final security finding verification",
+          "Execution authorization",
+          "Any activity requiring access that has not been granted"
+        ],
+        "escalate_when": "Use only when the task's value justifies the additional reasoning cost and the task is within the model's allowed use."
+      },
+      "mythos_gated_cyber": {
+        "purpose": "Optional specialized cybersecurity research capability for organizations accepted into Anthropic's Cyber Verification Program.",
+        "recommended_current_model": "Claude Mythos 5.2",
+        "model_id": null,
+        "availability": "Restricted; access through Anthropic's Cyber Verification Program or explicitly supported Anthropic security product. Not assumed to be available in ordinary Claude Code model selection.",
+        "use_for": [
+          "Only explicitly authorized cybersecurity research permitted by the program and service terms"
+        ],
+        "limitations": [
+          "Do not hardcode an undocumented model identifier.",
+          "Do not assume the user has program access.",
+          "Do not make Mythos a dependency of the curriculum or AEGIS v1.0.",
+          "Follow the program-specific authorization and safety requirements."
+        ],
+        "fallback": "Use the best generally available Claude model permitted for the task, while respecting its safeguards; otherwise leave the task for human-led work."
+      }
+    },
+    "routing_defaults": {
+      "simple_mechanical_or_high_volume": "haiku_fast",
+      "routine_implementation_and_analysis": "sonnet_default",
+      "complex_debugging_architecture_or_independent_review": "opus_deep",
+      "exceptionally_open_ended_non-sensitive_technical_advisory": "fable_frontier_advisor",
+      "restricted_cyber_program_only": "mythos_gated_cyber"
+    },
+    "phase_routing": {
+      "P01": "Use Sonnet for configuration and implementation; Opus for scope architecture and policy review; Haiku for metadata normalization.",
+      "P02": "Use Sonnet for practical systems exercises; Opus for complex memory, debugging and architecture explanations; Haiku for inventory summarization.",
+      "P03": "Use Opus to design the control plane and contracts; Sonnet to implement; Haiku for mechanical documentation and test fixture classification; Fable may advise on broad non-sensitive architecture.",
+      "P04": "Use Sonnet for bounded application-security lab work and implementation; Opus for threat modelling, difficult root-cause analysis and independent finding review; do not treat model output as proof.",
+      "P05": "Use Sonnet for source and dependency tooling; Haiku for alert normalization; Opus for reachability, patch review and material findings.",
+      "P06": "Use Sonnet to build and manage bounded fuzzing workflows; Haiku to cluster and summarize crash metadata; Opus for difficult reproduction and root-cause review. A model never certifies a crash as a vulnerability by itself.",
+      "P07": "Use Sonnet for routine binary-analysis support and documentation; Opus for complex reverse-engineering reasoning and mitigation review; keep practical work within local challenge binaries.",
+      "P08": "Use Sonnet for QEMU/Renode and firmware workflow implementation; Opus for boot-chain reasoning and cross-layer architecture; Fable may advise on ambitious non-sensitive hardware/software design. Record emulation limits.",
+      "P09": "Use Haiku/Sonnet for synthetic test execution and result normalization; Opus for evaluation design and review. Mythos is optional only with verified program access; Fable safeguards may block cybersecurity tasks and must not be circumvented.",
+      "P10": "Use Opus for system integration planning and cross-layer synthesis; Sonnet for implementation; Haiku for repetitive reporting; use an independent Opus or distinct model run to challenge critical findings. Fable may act as a high-level advisor where permitted."
+    },
+    "effort_policy": {
+      "low_or_medium": "Routine, bounded, well-specified tasks; conserve context and usage.",
+      "high": "Default for difficult reasoning and important review where supported.",
+      "xhigh": "Reserve for long-running coding or agentic tasks on supported Opus 4.7+ models; use only when the expected value justifies the cost.",
+      "max": "Rarely use for the most demanding analysis; do not make it the default.",
+      "rule": "Use the model's supported effort settings and its current recommended default. Availability varies by model, product surface and account."
+    },
+    "review_policy": {
+      "critical_findings": "Require a separate reviewer run with independent context; prefer a distinct model or model version when available.",
+      "no_self_certification": true,
+      "human_authority": "Human approval remains required for scope changes, consequential execution, final vulnerability severity and external disclosure.",
+      "correlated_error_warning": "Multiple agents using the same model, prompt and evidence are not independent corroboration. Record model identity and independence assumptions."
+    },
+    "runtime_discovery": {
+      "claude_code_command": "/model",
+      "session_status_command": "/status",
+      "policy": "Discover available model IDs at runtime. Do not assume a model is enabled for every account, plan or organization.",
+      "pinning": "Record the exact model ID, effort level and date for each run. Pin versions for benchmark comparisons; update defaults only through reviewed configuration changes.",
+      "fallback": "If a preferred model is unavailable, select an available model by capability tier, rerun the applicable evaluation and record the substitution. Never silently downgrade a high-consequence review."
+    },
+    "source_basis": [
+      {
+        "title": "Anthropic: Claude Fable 5.2 and Mythos 5.2",
+        "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+        "published": "2026-11-09",
+        "supports": [
+          "Fable and Mythos positioning",
+          "Fable cyber safeguards",
+          "Mythos Cyber Verification Program access",
+          "Anthropic's recommended model routing"
+        ]
+      },
+      {
+        "title": "Claude Code model configuration",
+        "url": "https://support.claude.com/en/articles/11940350-claude-code-model-configuration",
+        "checked": "2026-11-17",
+        "supports": [
+          "Current documented Claude Code model IDs",
+          "Runtime model selection"
+        ]
+      },
+      {
+        "title": "Models, usage and limits in Claude Code",
+        "url": "https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code",
+        "checked": "2026-11-17",
+        "supports": [
+          "Sonnet, Opus and Haiku task fit",
+          "Runtime availability caveat"
+        ]
+      },
+      {
+        "title": "Change the model, effort and thinking settings",
+        "url": "https://support.claude.com/en/articles/8664678-change-the-model-effort-and-thinking-settings",
+        "checked": "2026-11-17",
+        "supports": [
+          "Effort levels and availability"
+        ]
+      }
+    ]
+  },
+  "curriculum_control": {
+    "phase_transition_requires": [
+      "All phase acceptance criteria evaluated",
+      "Evidence artifacts stored and hash-verified",
+      "Independent reviewer outcome recorded",
+      "Unresolved issues and limitations documented",
+      "Human or authorized curriculum controller approves transition"
+    ],
+    "failed_gate_behavior": "Do not advance automatically. Identify the failed criterion, expose only the remediation brief for that criterion, and reassess after new evidence is produced.",
+    "exception_behavior": "A human may approve a skipped or modified gate. Record rationale, compensating evidence and residual risk. Never silently mark a gate passed.",
+    "adaptation": "The curriculum may adjust pacing and project difficulty based on demonstrated competency, but must preserve prerequisites, authorization controls and evidence standards.",
+    "phase_order_is_default": true
+  },
+  "phases": [
+    {
+      "phase_id": "P01",
+      "name": "Laboratory foundations",
+      "weeks": [
+        1,
+        2
+      ],
+      "purpose": "Establish a safe, repeatable and auditable environment before agents interact with research targets.",
+      "entry_criteria": [
+        "Working knowledge of Python and Linux CLI"
+      ],
+      "objectives": [
+        "Define authorization and scope boundaries",
+        "Create isolated disposable environments",
+        "Establish evidence integrity and experiment traceability"
+      ],
+      "weeks_detail": [
+        {
+          "week": 1,
+          "title": "Research scope and isolated laboratory",
+          "objective": "Create a disposable, isolated environment and define the authority boundary for every experiment.",
+          "competencies": [
+            "authorization_scoping",
+            "virtualization",
+            "network_isolation",
+            "snapshot_restore",
+            "emergency_stop"
+          ],
+          "activities": [
+            "Define written scope manifests for local targets, permitted actions, exclusions, time limits and stop conditions.",
+            "Prepare a Linux research workstation and disposable target environment using virtualisation.",
+            "Configure default-deny network access and documented exceptions for intentionally isolated lab networks.",
+            "Test snapshot, reset and restore procedures.",
+            "Document the emergency stop and human approval path."
+          ],
+          "deliverables": [
+            "Working isolated research lab",
+            "Scope manifest schema and one approved local mission",
+            "Restore and emergency-stop test record"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Targets are isolated by default.",
+            "A test cannot begin without a valid scope record.",
+            "The target can be returned to a known baseline.",
+            "A human can halt execution and revoke the mission."
+          ],
+          "agent_roles": [
+            "research_director",
+            "systems_analyst",
+            "policy_engine",
+            "evidence_curator"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P01",
+          "resource_ids": [
+            "qemu"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Project bootstrap and learner profile confirmed"
+        },
+        {
+          "week": 2,
+          "title": "Evidence vault and provenance",
+          "objective": "Preserve raw experiment outputs with integrity and provenance metadata.",
+          "competencies": [
+            "content_addressed_storage",
+            "hash_integrity",
+            "artifact_provenance",
+            "append_only_run_records",
+            "graph_basics"
+          ],
+          "activities": [
+            "Implement content-addressed artifact storage using SHA-256 identifiers.",
+            "Record source, collection time, mission, run, tool version and target snapshot for every artifact.",
+            "Separate raw artifacts from agent summaries and conclusions.",
+            "Create an append-only run manifest and test artifact integrity verification.",
+            "Represent missions, runs and artifacts in an initial Memgraph schema."
+          ],
+          "deliverables": [
+            "Evidence vault v0.1",
+            "Artifact manifest schema",
+            "Integrity verification test",
+            "Initial Memgraph entities and relationships"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Every recorded result references a preserved raw artifact or explicitly states why none exists.",
+            "Artifact hashes verify after storage and retrieval.",
+            "Agent-generated interpretation is never substituted for raw output."
+          ],
+          "agent_roles": [
+            "evidence_curator",
+            "graph_steward",
+            "systems_analyst",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P01",
+          "resource_ids": [
+            "memgraph"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "Every recorded result references a preserved raw artifact or explicitly states why none exists.",
+        "Artifact hashes verify after storage and retrieval.",
+        "Agent-generated interpretation is never substituted for raw output."
+      ]
+    },
+    {
+      "phase_id": "P02",
+      "name": "Systems and architecture",
+      "weeks": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "purpose": "Deepen existing Python and Linux skills into practical systems understanding across processes, memory, networking and architecture.",
+      "entry_criteria": [
+        "P01 exit gate passed"
+      ],
+      "objectives": [
+        "Understand process, filesystem and permission behaviour",
+        "Read and reason about C memory behaviour",
+        "Trace network protocols and system interactions",
+        "Inventory a controlled system as structured data"
+      ],
+      "weeks_detail": [
+        {
+          "week": 3,
+          "title": "Python research core",
+          "objective": "Build a typed, testable command-line foundation for research tasks.",
+          "competencies": [
+            "python_typing",
+            "packaging",
+            "testing",
+            "json_schema",
+            "cli_design",
+            "structured_logging"
+          ],
+          "activities": [
+            "Use typed Python, packaging, pytest, structured logging and configuration management.",
+            "Define versioned Pydantic models and JSON Schema contracts.",
+            "Build a CLI that accepts a mission file and emits a structured run manifest.",
+            "Add unit tests, error handling and deterministic output fixtures."
+          ],
+          "deliverables": [
+            "Research CLI skeleton",
+            "Versioned configuration and data contracts",
+            "Automated unit tests"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "The CLI validates mission input, emits schema-valid output and fails safely on malformed or incomplete input."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P02",
+          "resource_ids": [
+            "claude-code"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "sonnet_default",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 4,
+          "title": "Linux internals and system inventory",
+          "objective": "Explain and inventory processes, permissions, filesystems and system configuration on an approved Linux target.",
+          "competencies": [
+            "linux_processes",
+            "permissions",
+            "filesystems",
+            "procfs",
+            "system_inventory",
+            "structured_observations"
+          ],
+          "activities": [
+            "Inspect processes, services, users, groups, file permissions and mounts.",
+            "Study process lifecycle, signals, /proc, system calls and Linux capabilities.",
+            "Collect package, kernel, architecture and network-interface metadata.",
+            "Normalize observations into typed JSON records."
+          ],
+          "deliverables": [
+            "System Atlas inventory worker",
+            "Sample inventory dataset",
+            "System component graph"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Inventory is repeatable on a pinned target snapshot.",
+            "Collection is read-only unless separately authorized.",
+            "Every observation includes source and collection metadata."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P02",
+          "resource_ids": [
+            "pwn-college",
+            "ost2"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 5,
+          "title": "C, memory and sanitizers",
+          "objective": "Understand basic memory layout and use sanitizers to diagnose defects in deliberately flawed local C programs.",
+          "competencies": [
+            "c_memory_model",
+            "pointers",
+            "allocation",
+            "sanitizers",
+            "debugging",
+            "root_cause_analysis"
+          ],
+          "activities": [
+            "Review pointers, arrays, structs, allocation, ownership conventions and undefined behaviour.",
+            "Compile small local examples with compiler warnings and address/undefined-behaviour sanitizers.",
+            "Use a debugger to inspect a reproducible failure and its root cause.",
+            "Compare unsafe C patterns with safer implementation alternatives."
+          ],
+          "deliverables": [
+            "C experiment collection",
+            "Sanitizer-backed test reports",
+            "Root-cause note and corrected example"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Explain the defect at source level.",
+            "Reproduce it in the local exercise.",
+            "Demonstrate a corrective change and regression test."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P02",
+          "resource_ids": [
+            "ost2"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 6,
+          "title": "Networking, protocols and architecture map",
+          "objective": "Build a structured model of how a controlled system communicates and which components expose interfaces.",
+          "competencies": [
+            "tcp_ip",
+            "dns",
+            "http_tls",
+            "sockets",
+            "network_observation",
+            "trust_boundaries"
+          ],
+          "activities": [
+            "Study TCP/IP, DNS, HTTP, TLS, sockets and client/server boundaries.",
+            "Inspect local traffic generated by a deliberately configured lab application.",
+            "Map processes to listening interfaces and document trust boundaries.",
+            "Relate host, service, process and interface entities in Memgraph."
+          ],
+          "deliverables": [
+            "System Atlas v0.1",
+            "Protocol and interface map",
+            "Memgraph system graph"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "The map is based on observed local configuration and traffic.",
+            "Unknowns are labelled as unknown rather than inferred.",
+            "No external target is contacted."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P02",
+          "resource_ids": [
+            "beej-network",
+            "pwn-college"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "The map is based on observed local configuration and traffic.",
+        "Unknowns are labelled as unknown rather than inferred.",
+        "No external target is contacted."
+      ]
+    },
+    {
+      "phase_id": "P03",
+      "name": "Agent harness engineering",
+      "weeks": [
+        7,
+        8,
+        9
+      ],
+      "purpose": "Make Claude Code the initial interface to a portable, policy-governed research core.",
+      "entry_criteria": [
+        "P02 exit gate passed",
+        "System Atlas can inventory a local target"
+      ],
+      "objectives": [
+        "Configure project context and task-specific agent guidance",
+        "Implement deterministic permissions and tool mediation",
+        "Create harness-independent tool and data contracts"
+      ],
+      "weeks_detail": [
+        {
+          "week": 7,
+          "title": "Claude Code project and agent context",
+          "objective": "Create a disciplined Claude Code workspace with concise persistent project context and reusable task guidance.",
+          "competencies": [
+            "claude_code_context",
+            "project_rules",
+            "skills",
+            "session_handoff",
+            "progressive_disclosure"
+          ],
+          "activities": [
+            "Create CLAUDE.md with project goal, invariants, repository map and escalation rules.",
+            "Create focused rules and skills for inventory, source review and evidence handling.",
+            "Separate stable project guidance from phase-specific and task-specific context.",
+            "Establish session handoff notes and a research decision log."
+          ],
+          "deliverables": [
+            "Claude Code project configuration",
+            "Initial research skills and rules",
+            "Agent context-loading policy"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "A fresh session can identify the project goal, current mission and constraints without replaying the entire conversation.",
+            "Persistent context is concise and does not duplicate full curriculum content."
+          ],
+          "agent_roles": [
+            "research_director",
+            "harness_engineer",
+            "evidence_curator"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P03",
+          "resource_ids": [
+            "claude-code"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 8,
+          "title": "Subagents, hooks and permission controls",
+          "objective": "Separate reasoning roles from execution authority and enforce scope through deterministic controls.",
+          "competencies": [
+            "subagents",
+            "hooks",
+            "permissions",
+            "tool_broker",
+            "policy_enforcement",
+            "audit_logging"
+          ],
+          "activities": [
+            "Create a systems analyst, source analyst, reviewer and evidence curator role.",
+            "Use hooks and permissions for deterministic checks, logging and policy enforcement.",
+            "Implement a tool broker that validates mission, target, operation and approval state.",
+            "Test denied operations, invalid scope, malformed tool requests and emergency stop behaviour."
+          ],
+          "deliverables": [
+            "Four initial agent role definitions",
+            "Tool broker prototype",
+            "Policy test suite",
+            "Execution audit records"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Agents cannot broaden scope or self-approve consequential actions.",
+            "Denied operations are blocked at the execution boundary.",
+            "Every permitted tool execution is attributable to a mission and run."
+          ],
+          "agent_roles": [
+            "harness_engineer",
+            "policy_engine",
+            "research_director",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P03",
+          "resource_ids": [
+            "claude-code"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 9,
+          "title": "MCP and harness portability",
+          "objective": "Make the research core callable through stable contracts independent of Claude Code.",
+          "competencies": [
+            "mcp",
+            "cli_adapters",
+            "versioned_contracts",
+            "harness_portability",
+            "run_metadata"
+          ],
+          "activities": [
+            "Define versioned JSON contracts for missions, tool requests, runs, observations and findings.",
+            "Expose selected read-only and low-risk operations through CLI and MCP adapters.",
+            "Create a second harness adapter or adapter conformance test without duplicating business logic.",
+            "Record model, harness, version, settings and tool versions for every run."
+          ],
+          "deliverables": [
+            "MCP adapter",
+            "CLI adapter",
+            "Contract conformance tests",
+            "Harness run metadata schema"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Two interfaces consume the same canonical contracts.",
+            "Core policy and evidence logic remain outside harness-specific code.",
+            "Unsupported adapters fail closed."
+          ],
+          "agent_roles": [
+            "harness_engineer",
+            "tool_broker",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P03",
+          "resource_ids": [
+            "mcp",
+            "claude-code"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "Two interfaces consume the same canonical contracts.",
+        "Core policy and evidence logic remain outside harness-specific code.",
+        "Unsupported adapters fail closed."
+      ]
+    },
+    {
+      "phase_id": "P04",
+      "name": "Application security",
+      "weeks": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "purpose": "Assess deliberately vulnerable local applications and authorized training environments, emphasizing testability and root-cause understanding.",
+      "entry_criteria": [
+        "P03 exit gate passed",
+        "Tool broker and scope checks are active"
+      ],
+      "objectives": [
+        "Map application trust boundaries",
+        "Understand common application and API weakness classes",
+        "Verify findings and validate mitigations"
+      ],
+      "weeks_detail": [
+        {
+          "week": 10,
+          "title": "Threat modelling and trust boundaries",
+          "objective": "Create a structured threat model for a deliberately vulnerable local application.",
+          "competencies": [
+            "threat_modeling",
+            "data_flow_mapping",
+            "asset_identification",
+            "trust_boundary_analysis"
+          ],
+          "activities": [
+            "Map components, data flows, identities, trust boundaries and exposed interfaces.",
+            "Identify security assumptions and assets requiring protection.",
+            "Map threats to testable security requirements.",
+            "Store model elements and links in Memgraph."
+          ],
+          "deliverables": [
+            "Application threat model",
+            "Trust-boundary graph",
+            "Testable security requirements"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Threat model identifies assets, actors, interfaces, trust boundaries and assumptions.",
+            "Each proposed test is tied to a local target and authorized scope."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P04",
+          "resource_ids": [
+            "owasp-asvs",
+            "portswigger"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 11,
+          "title": "Authentication and authorization",
+          "objective": "Evaluate identity, session and access-control behaviour in sanctioned local exercises.",
+          "competencies": [
+            "authentication",
+            "session_management",
+            "authorization",
+            "access_control_testing"
+          ],
+          "activities": [
+            "Study authentication lifecycle, session handling, authorization decisions and object-level access.",
+            "Complete relevant PortSwigger Academy labs.",
+            "Create structured test cases for expected and prohibited access.",
+            "Record observed versus expected outcomes."
+          ],
+          "deliverables": [
+            "Authentication and authorization test suite",
+            "Lab evidence records",
+            "Assessment summary"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Findings cite reproducible lab evidence.",
+            "A test outcome is not labelled vulnerable without demonstrating the violated security requirement."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P04",
+          "resource_ids": [
+            "portswigger",
+            "owasp-asvs"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 12,
+          "title": "Input handling, APIs and injection classes",
+          "objective": "Understand how input crosses trust boundaries and evaluate safe test cases in local applications.",
+          "competencies": [
+            "input_validation",
+            "output_encoding",
+            "api_security",
+            "deserialization_risk",
+            "test_design"
+          ],
+          "activities": [
+            "Study input validation, output encoding, injection concepts, API schemas and deserialization risks.",
+            "Use training labs and intentionally vulnerable local services only.",
+            "Map input paths to source handlers and validation controls.",
+            "Record negative tests, positive controls and remediation options."
+          ],
+          "deliverables": [
+            "Input and API assessment report",
+            "Input-path graph",
+            "Reproducible local test cases"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "The report distinguishes reachable code paths from speculative patterns.",
+            "Tests remain within the approved training environment."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P04",
+          "resource_ids": [
+            "portswigger",
+            "owasp-asvs"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 13,
+          "title": "Business logic and verified findings",
+          "objective": "Turn application observations into defensible findings with validated fixes.",
+          "competencies": [
+            "business_logic_testing",
+            "reproduction",
+            "impact_analysis",
+            "patching",
+            "regression_testing"
+          ],
+          "activities": [
+            "Model business rules and expected application invariants.",
+            "Investigate seeded logic defects and concurrency edge cases in local labs.",
+            "Reproduce a defect and identify its root cause.",
+            "Implement a fix and verify it with regression tests."
+          ],
+          "deliverables": [
+            "Verified application finding",
+            "Patch and regression test",
+            "Responsible-report template"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Finding includes affected component, preconditions, evidence, impact rationale and remediation.",
+            "Patch demonstrably addresses the root cause.",
+            "Reviewer independently checks the evidence."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P04",
+          "resource_ids": [
+            "portswigger",
+            "owasp-asvs"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "Finding includes affected component, preconditions, evidence, impact rationale and remediation.",
+        "Patch demonstrably addresses the root cause.",
+        "Reviewer independently checks the evidence."
+      ]
+    },
+    {
+      "phase_id": "P05",
+      "name": "Source code and software supply chain",
+      "weeks": [
+        14,
+        15,
+        16
+      ],
+      "purpose": "Connect source-level weaknesses, dependency exposure and patch quality without treating a scanner alert as proof.",
+      "entry_criteria": [
+        "P04 exit gate passed"
+      ],
+      "objectives": [
+        "Perform source and data-flow review",
+        "Inventory dependencies and known vulnerability metadata",
+        "Assess reachability, applicability and remediation"
+      ],
+      "weeks_detail": [
+        {
+          "week": 14,
+          "title": "Static analysis and source review",
+          "objective": "Build an analyzer-assisted source review process for a pinned repository.",
+          "competencies": [
+            "static_analysis",
+            "taint_analysis",
+            "data_flow",
+            "false_positive_triage",
+            "source_review"
+          ],
+          "activities": [
+            "Study static analysis, taint concepts, data flow and common source-level weakness patterns.",
+            "Integrate Semgrep or equivalent static analysis in a controlled repository.",
+            "Map alerts to source files, symbols and relevant code paths.",
+            "Triage false positives and record reasoning."
+          ],
+          "deliverables": [
+            "Source review worker",
+            "Static analysis result schema",
+            "Triage examples"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Alerts remain candidate observations until verified.",
+            "Source locations and analyzer version are preserved.",
+            "At least one false positive is correctly rejected."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P05",
+          "resource_ids": [
+            "semgrep"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": "haiku_fast",
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 15,
+          "title": "SBOM and dependency relationships",
+          "objective": "Create a dependency inventory and link affected components to reliable vulnerability information.",
+          "competencies": [
+            "sbom_generation",
+            "dependency_identity",
+            "advisory_correlation",
+            "reachability_analysis",
+            "graph_ingestion"
+          ],
+          "activities": [
+            "Generate an SBOM using Syft or an equivalent tool.",
+            "Use OSV-Scanner or equivalent to identify candidate known vulnerabilities.",
+            "Compare package identity, version, configuration and actual dependency path.",
+            "Represent package-to-asset and package-to-advisory relationships in Memgraph."
+          ],
+          "deliverables": [
+            "SBOM artifact",
+            "Dependency graph",
+            "Candidate vulnerability report"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Every candidate is tied to an identified package and version.",
+            "Applicability is separately assessed from mere package presence.",
+            "External advisories are cited with retrieval timestamps."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P05",
+          "resource_ids": [
+            "syft",
+            "osv-scanner"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": "haiku_fast",
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 16,
+          "title": "Patch review and regression validation",
+          "objective": "Assess whether a patch addresses the root cause and preserves expected behaviour.",
+          "competencies": [
+            "patch_review",
+            "diff_analysis",
+            "regression_validation",
+            "residual_risk_assessment"
+          ],
+          "activities": [
+            "Review source diffs and security fixes in pinned repositories.",
+            "Map patches to affected functions, tests and findings.",
+            "Run local tests and regression checks.",
+            "Record unresolved assumptions and residual risk."
+          ],
+          "deliverables": [
+            "Patch evaluator",
+            "Fix verification record",
+            "Updated finding lifecycle"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "A patch is not marked fixed until an appropriate regression test passes.",
+            "Review records before/after behaviour and residual uncertainty."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P05",
+          "resource_ids": [
+            "semgrep",
+            "owasp-asvs"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "A patch is not marked fixed until an appropriate regression test passes.",
+        "Review records before/after behaviour and residual uncertainty."
+      ]
+    },
+    {
+      "phase_id": "P06",
+      "name": "Fuzzing and vulnerability discovery",
+      "weeks": [
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "purpose": "Perform systematic, reproducible defect discovery against local targets and purpose-built vulnerable programs.",
+      "entry_criteria": [
+        "P05 exit gate passed",
+        "Isolated test workers and evidence preservation are operational"
+      ],
+      "objectives": [
+        "Build harnesses and corpora",
+        "Run bounded fuzzing experiments",
+        "Classify and minimize failures",
+        "Establish root cause and verify remediation"
+      ],
+      "weeks_detail": [
+        {
+          "week": 17,
+          "title": "Fuzzing foundations and harnesses",
+          "objective": "Prepare a local parser or target for repeatable fuzz testing.",
+          "competencies": [
+            "fuzzing_fundamentals",
+            "harness_design",
+            "corpus_design",
+            "resource_bounding",
+            "experiment_manifests"
+          ],
+          "activities": [
+            "Study mutation-based and coverage-guided fuzzing concepts.",
+            "Choose a small, documented local parser or deliberately vulnerable target.",
+            "Create a deterministic build and test harness.",
+            "Establish seed corpus, resource limits and stop conditions."
+          ],
+          "deliverables": [
+            "FuzzLab target and harness",
+            "Initial corpus",
+            "Experiment manifest"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Target build and harness are reproducible.",
+            "Campaign limits and reset procedure are explicit.",
+            "The target is local and within written scope."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P06",
+          "resource_ids": [
+            "aflpp",
+            "libfuzzer"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 18,
+          "title": "AFL++ and instrumentation",
+          "objective": "Run a bounded coverage-guided fuzzing campaign against the local target.",
+          "competencies": [
+            "afl_plus_plus",
+            "instrumentation",
+            "coverage_feedback",
+            "bounded_campaigns",
+            "artifact_capture"
+          ],
+          "activities": [
+            "Instrument the target using documented AFL++ workflows.",
+            "Validate instrumentation and basic coverage feedback.",
+            "Run a time- and resource-bounded campaign.",
+            "Capture corpus changes, run metadata and tool versions."
+          ],
+          "deliverables": [
+            "AFL++ campaign record",
+            "Coverage and corpus artifacts",
+            "Reproducible run configuration"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Campaign can be restarted from a known state.",
+            "Tool output and corpus are preserved.",
+            "No unapproved external target or network activity occurs."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P06",
+          "resource_ids": [
+            "aflpp"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": "haiku_fast",
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 19,
+          "title": "Sanitizers and crash classification",
+          "objective": "Classify observed failures and distinguish actionable defects from harness errors and benign outcomes.",
+          "competencies": [
+            "sanitizers",
+            "crash_classification",
+            "deduplication",
+            "observation_triage",
+            "false_positive_control"
+          ],
+          "activities": [
+            "Use compiler sanitizers and debugger output for local programs.",
+            "Classify crashes, hangs, assertion failures and harness faults.",
+            "Deduplicate using reproducible signatures and artifact references.",
+            "Keep uncertain cases as observations rather than confirmed vulnerabilities."
+          ],
+          "deliverables": [
+            "Crash classification pipeline",
+            "Failure taxonomy",
+            "Deduplicated observation records"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Classification preserves original artifacts.",
+            "A crash alone is never treated as proof of exploitability or security impact."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P06",
+          "resource_ids": [
+            "aflpp",
+            "libfuzzer"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": "haiku_fast",
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 20,
+          "title": "Reproduction and test-case minimization",
+          "objective": "Create minimal, deterministic reproductions of selected local failures.",
+          "competencies": [
+            "reproduction",
+            "test_case_minimization",
+            "environment_pinning",
+            "reproducibility_assessment"
+          ],
+          "activities": [
+            "Re-run candidate failures against pinned target builds.",
+            "Minimize input cases using supported local tooling.",
+            "Record environment, compiler, sanitizer and target configuration.",
+            "Separate stable reproductions from flaky or non-reproducible observations."
+          ],
+          "deliverables": [
+            "Minimal reproducer artifacts",
+            "Reproduction matrix",
+            "Reproducibility score records"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "A reproduced failure can be replayed from the stored input and environment manifest.",
+            "Flaky outcomes are clearly marked."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P06",
+          "resource_ids": [
+            "aflpp"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 21,
+          "title": "Root cause, remediation and regression",
+          "objective": "Complete a full discovery-to-fix cycle for a seeded local defect.",
+          "competencies": [
+            "root_cause_analysis",
+            "impact_rationale",
+            "remediation",
+            "regression_tests",
+            "independent_review"
+          ],
+          "activities": [
+            "Trace the failure to the responsible code and violated invariant.",
+            "Explain preconditions and realistic impact without overstating evidence.",
+            "Implement a correction in the training target.",
+            "Add a regression test and update graph relationships."
+          ],
+          "deliverables": [
+            "Verified local vulnerability report",
+            "Corrective patch",
+            "Regression test",
+            "Updated graph provenance"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Finding has reproducible evidence and root-cause explanation.",
+            "Patch fixes the underlying defect.",
+            "Independent reviewer agrees or records a specific unresolved disagreement."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P06",
+          "resource_ids": [
+            "aflpp",
+            "oss-fuzz"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "Finding has reproducible evidence and root-cause explanation.",
+        "Patch fixes the underlying defect.",
+        "Independent reviewer agrees or records a specific unresolved disagreement."
+      ]
+    },
+    {
+      "phase_id": "P07",
+      "name": "Reverse engineering",
+      "weeks": [
+        22,
+        23,
+        24,
+        25
+      ],
+      "purpose": "Understand compiled program structure and vulnerability mechanics using local binaries and sanctioned training challenges.",
+      "entry_criteria": [
+        "P06 exit gate passed"
+      ],
+      "objectives": [
+        "Inspect ELF and executable structure",
+        "Use GDB and Ghidra to understand program behaviour",
+        "Explain memory-safety defects and mitigations",
+        "Validate patches and regression results"
+      ],
+      "weeks_detail": [
+        {
+          "week": 22,
+          "title": "ELF, Ghidra and GDB orientation",
+          "objective": "Map the structure and observable behaviour of a benign or deliberately vulnerable local binary.",
+          "competencies": [
+            "elf_formats",
+            "binary_provenance",
+            "ghidra",
+            "gdb",
+            "symbol_analysis"
+          ],
+          "activities": [
+            "Study ELF headers, sections, symbols, dynamic linking and debug information.",
+            "Inspect a local binary with Ghidra and GDB.",
+            "Relate decompiled functions to source when available.",
+            "Record binary hashes, build metadata and analysis references."
+          ],
+          "deliverables": [
+            "Binary inventory report",
+            "Ghidra project notes",
+            "Function and dependency map"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Analysis identifies binary provenance and tool versions.",
+            "Decompiled output is treated as an interpretation, not original source truth."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P07",
+          "resource_ids": [
+            "ghidra",
+            "ost2"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 23,
+          "title": "Assembly, calling conventions and memory",
+          "objective": "Explain how a local program uses registers, stack, heap and calling conventions.",
+          "competencies": [
+            "assembly",
+            "calling_conventions",
+            "registers",
+            "stack_heap",
+            "runtime_tracing"
+          ],
+          "activities": [
+            "Study architecture-specific assembly concepts for the selected target.",
+            "Trace selected functions and data flow in a debugger.",
+            "Compare compiler output across controlled build settings.",
+            "Document the relationship between source, binary and runtime observations."
+          ],
+          "deliverables": [
+            "Program behaviour map",
+            "Annotated local execution trace",
+            "Architecture notes"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Claims are anchored to reproducible local observations and architecture assumptions."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P07",
+          "resource_ids": [
+            "ost2",
+            "ghidra"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 24,
+          "title": "Memory-safety defects in controlled binaries",
+          "objective": "Investigate seeded memory-safety defects and explain the conditions that produce them.",
+          "competencies": [
+            "memory_safety",
+            "controlled_ctf_analysis",
+            "defect_preconditions",
+            "mitigation_analysis"
+          ],
+          "activities": [
+            "Study stack and heap errors, use-after-free, bounds errors and integer issues.",
+            "Use isolated CTF binaries or purpose-built vulnerable programs.",
+            "Trace defect conditions and observe relevant mitigations.",
+            "Keep demonstrations limited to the provided local exercises."
+          ],
+          "deliverables": [
+            "Memory-safety investigation report",
+            "Reproducible local test record",
+            "Mitigation analysis"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Explain the root cause and preconditions.",
+            "Separate a program crash from demonstrated security impact.",
+            "No payload is developed for use against a third-party target."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P07",
+          "resource_ids": [
+            "pwn-college",
+            "ost2"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 25,
+          "title": "Mitigations and patch verification",
+          "objective": "Compare security mitigations and demonstrate a corrected implementation.",
+          "competencies": [
+            "compiler_mitigations",
+            "os_mitigations",
+            "patch_verification",
+            "technical_reporting"
+          ],
+          "activities": [
+            "Study relevant compiler and operating-system mitigations conceptually.",
+            "Compare vulnerable and corrected local builds.",
+            "Use tests and debugger observations to validate remediation.",
+            "Prepare a concise report suitable for independent review."
+          ],
+          "deliverables": [
+            "Binary research report",
+            "Mitigation comparison",
+            "Patched local target and regression test"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Report distinguishes mitigations from root-cause fixes.",
+            "The corrected program passes the relevant regression tests."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P07",
+          "resource_ids": [
+            "ghidra",
+            "ost2"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "Report distinguishes mitigations from root-cause fixes.",
+        "The corrected program passes the relevant regression tests."
+      ]
+    },
+    {
+      "phase_id": "P08",
+      "name": "Firmware and hardware emulation",
+      "weeks": [
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "purpose": "Build a hardware-security research capability using emulated full systems and embedded platforms, while recognizing physical-world limitations.",
+      "entry_criteria": [
+        "P07 exit gate passed",
+        "Emulation targets and disposable snapshots are available"
+      ],
+      "objectives": [
+        "Operate QEMU full-system emulation",
+        "Inspect firmware images and component inventories",
+        "Use Renode for embedded firmware and simulated peripherals",
+        "Model boot and trust boundaries",
+        "Connect hardware and software entities in the research graph"
+      ],
+      "weeks_detail": [
+        {
+          "week": 26,
+          "title": "QEMU full-system research environment",
+          "objective": "Create a repeatable emulated Linux system for controlled assessment.",
+          "competencies": [
+            "qemu_system_emulation",
+            "virtual_devices",
+            "guest_inventory",
+            "snapshots",
+            "network_isolation"
+          ],
+          "activities": [
+            "Configure QEMU system emulation using documented machine and device models.",
+            "Boot a disposable guest and capture baseline configuration.",
+            "Use snapshots and isolated networking.",
+            "Record host, guest, machine model and image hashes."
+          ],
+          "deliverables": [
+            "QEMU lab profile",
+            "Emulated system inventory",
+            "Snapshot and restore procedure"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "The guest boots reproducibly.",
+            "The environment is isolated and resettable.",
+            "The machine model and emulation assumptions are documented."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P08",
+          "resource_ids": [
+            "qemu"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 27,
+          "title": "Firmware structure and component analysis",
+          "objective": "Inventory a research-suitable firmware image and its constituent components.",
+          "competencies": [
+            "firmware_extraction",
+            "filesystem_analysis",
+            "component_inventory",
+            "sbom",
+            "artifact_preservation"
+          ],
+          "activities": [
+            "Inspect a firmware image using EMBA, Binwalk and supporting tools.",
+            "Identify filesystems, binaries, packages and configuration data.",
+            "Generate component and dependency records.",
+            "Preserve the original firmware image and extraction provenance."
+          ],
+          "deliverables": [
+            "Firmware inventory",
+            "Component and package graph",
+            "Analysis artifact manifest"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "The original image is hash-identified and preserved.",
+            "Tool-derived results are distinguished from manual confirmation.",
+            "No device is modified."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P08",
+          "resource_ids": [
+            "emba",
+            "binwalk"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": "haiku_fast",
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 28,
+          "title": "Renode and embedded systems",
+          "objective": "Build a simulated embedded platform and inspect firmware behaviour within its modeled environment.",
+          "competencies": [
+            "renode",
+            "embedded_firmware",
+            "peripheral_models",
+            "simulated_interfaces",
+            "emulation_limitations"
+          ],
+          "activities": [
+            "Select a documented Renode-supported platform or exercise.",
+            "Load and run a sample firmware image in simulation.",
+            "Inspect modeled peripherals, memory and communication interfaces.",
+            "Record simulator version, platform description and known modeling gaps."
+          ],
+          "deliverables": [
+            "Renode platform profile",
+            "Embedded firmware run record",
+            "Peripheral and interface map"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "The selected platform and peripheral behavior are documented.",
+            "Simulation evidence is not misrepresented as physical-hardware evidence."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P08",
+          "resource_ids": [
+            "renode"
+          ],
+          "model_routing": {
+            "planner": "sonnet_default",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 29,
+          "title": "Boot chain and platform trust",
+          "objective": "Model boot stages and evaluate security assumptions in an emulated system.",
+          "competencies": [
+            "boot_processes",
+            "uefi_concepts",
+            "secure_boot",
+            "measured_boot",
+            "trust_chain_modeling"
+          ],
+          "activities": [
+            "Study firmware boot, UEFI concepts, secure boot and measured boot.",
+            "Map boot stages, trust transitions, configuration and key dependencies conceptually.",
+            "Inspect only documented and intentionally provided emulated test configurations.",
+            "Record which properties cannot be established by emulation alone."
+          ],
+          "deliverables": [
+            "Boot-chain model",
+            "Trust-boundary graph",
+            "Emulation limitation report"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Each trust assertion has evidence or is marked as an assumption.",
+            "Physical chipset behaviour is not claimed from emulation."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P08",
+          "resource_ids": [
+            "qemu"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 30,
+          "title": "Cross-layer hardware and software graph",
+          "objective": "Connect firmware, components, interfaces, binaries, observations and findings in one research model.",
+          "competencies": [
+            "cross_layer_graph_modeling",
+            "provenance_graphs",
+            "confidence_modeling",
+            "orb_visualization",
+            "graph_queries"
+          ],
+          "activities": [
+            "Merge QEMU, Renode and firmware-analysis records into the common graph schema.",
+            "Represent provenance, confidence, reproducibility and recency separately.",
+            "Create Orb views for firmware dependencies, interfaces and findings.",
+            "Document graph query examples and visualization semantics."
+          ],
+          "deliverables": [
+            "Cross-layer graph",
+            "Orb views",
+            "Graph schema v1.0",
+            "Research case study"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Every important relationship has a source or derivation record.",
+            "Confidence is separate from severity.",
+            "Hypotheses and confirmed findings are visually distinguishable."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P08",
+          "resource_ids": [
+            "memgraph",
+            "orb"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "Every important relationship has a source or derivation record.",
+        "Confidence is separate from severity.",
+        "Hypotheses and confirmed findings are visually distinguishable."
+      ]
+    },
+    {
+      "phase_id": "P09",
+      "name": "AI-agent security",
+      "weeks": [
+        31,
+        32,
+        33
+      ],
+      "purpose": "Evaluate the security and reliability of agents, harnesses, tool interfaces and research memory using synthetic test ranges.",
+      "entry_criteria": [
+        "P08 exit gate passed",
+        "Mission, policy, evidence and graph infrastructure are operational"
+      ],
+      "objectives": [
+        "Test trust boundaries and untrusted content handling",
+        "Evaluate MCP and tool permission enforcement",
+        "Benchmark model and harness reliability"
+      ],
+      "weeks_detail": [
+        {
+          "week": 31,
+          "title": "Agent instruction boundaries and untrusted content",
+          "objective": "Evaluate whether synthetic hostile instructions can improperly influence a research agent.",
+          "competencies": [
+            "prompt_injection_testing",
+            "untrusted_content",
+            "instruction_hierarchy",
+            "synthetic_test_design",
+            "policy_regression"
+          ],
+          "activities": [
+            "Create synthetic repositories and documents containing conflicting or misleading instructions.",
+            "Test whether the agent distinguishes content from trusted project policy.",
+            "Record attempted and successful policy violations in a controlled test harness.",
+            "Improve deterministic controls and regression tests."
+          ],
+          "deliverables": [
+            "Agent trust-boundary test suite",
+            "Injection-resistance results",
+            "Regression cases"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Tests are synthetic and local.",
+            "A claimed refusal is not counted as a pass unless the operation is actually blocked or safely rejected."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P09",
+          "resource_ids": [
+            "claude-code"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": "haiku_fast",
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 32,
+          "title": "MCP tool security and authorization",
+          "objective": "Assess tool identity, schemas, permissions and scope enforcement in a synthetic MCP environment.",
+          "competencies": [
+            "mcp_security",
+            "tool_identity",
+            "schema_validation",
+            "authorization_boundaries",
+            "execution_auditing"
+          ],
+          "activities": [
+            "Review MCP tool descriptions, schemas, server trust and authentication boundaries.",
+            "Create mock tools with intentionally confusing or overbroad descriptions.",
+            "Verify tool broker and worker policy enforcement.",
+            "Test logging, approval and denial paths."
+          ],
+          "deliverables": [
+            "MCP security test suite",
+            "Tool permission matrix",
+            "Broker assurance report"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Tool descriptions cannot grant authority.",
+            "Policy is enforced outside the model.",
+            "Every test has expected and observed outcomes."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P09",
+          "resource_ids": [
+            "mcp",
+            "claude-code"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 33,
+          "title": "Harness and model benchmark",
+          "objective": "Compare supported Claude models and harness configurations on a fixed set of safe research tasks.",
+          "competencies": [
+            "model_benchmarking",
+            "harness_comparison",
+            "evaluation_design",
+            "cost_tracking",
+            "independent_review"
+          ],
+          "activities": [
+            "Create benchmark cases with seeded positives, benign decoys and incomplete evidence.",
+            "Compare Haiku, Sonnet, Opus and Fable where permitted and available.",
+            "Record model ID, effort, harness, prompt/configuration hash, tools, cost and outcome.",
+            "Measure precision, recall on seeded cases, evidence completeness, scope compliance and reproducibility."
+          ],
+          "deliverables": [
+            "Agent benchmark suite",
+            "Model and harness comparison report",
+            "Model routing recommendations"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Runs are repeatable and configuration-pinned.",
+            "No model's unsupported claim is counted as a finding.",
+            "Scope violations are a hard failure.",
+            "Benchmarks distinguish model performance from tool and harness effects."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P09",
+          "resource_ids": [
+            "claude-models"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": "haiku_fast",
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": false,
+            "mythos_default": false,
+            "benchmark_models": [
+              "haiku_fast",
+              "sonnet_default",
+              "opus_deep",
+              "fable_frontier_advisor"
+            ],
+            "escalation_rule": "Benchmark each eligible tier on identical cases. Use Mythos only where program access is independently verified and the task is permitted; do not make it a curriculum dependency."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "Runs are repeatable and configuration-pinned.",
+        "No model's unsupported claim is counted as a finding.",
+        "Scope violations are a hard failure.",
+        "Benchmarks distinguish model performance from tool and harness effects."
+      ]
+    },
+    {
+      "phase_id": "P10",
+      "name": "Research platform capstone",
+      "weeks": [
+        34,
+        35,
+        36
+      ],
+      "purpose": "Integrate the disciplines into an evidence-first research workbench and demonstrate independent reproducibility.",
+      "entry_criteria": [
+        "P09 exit gate passed",
+        "All core agents, workers, evidence records and graph contracts are versioned"
+      ],
+      "objectives": [
+        "Integrate the research workflow",
+        "Complete one cross-layer investigation on a seeded local target",
+        "Conduct clean-room reproduction and publish a defensible report"
+      ],
+      "weeks_detail": [
+        {
+          "week": 34,
+          "title": "Integrate AEGIS research workflow",
+          "objective": "Connect mission management, harness adapters, controlled workers, evidence storage and graph ingestion.",
+          "competencies": [
+            "system_integration",
+            "worker_orchestration",
+            "end_to_end_testing",
+            "report_generation",
+            "operational_documentation"
+          ],
+          "activities": [
+            "Integrate systems, source, software, fuzzing and emulation workers behind the tool broker.",
+            "Connect Claude Code and alternate harness adapters to common contracts.",
+            "Implement end-to-end run tracking and failure handling.",
+            "Create Orb research views and report generation."
+          ],
+          "deliverables": [
+            "AEGIS v0.9 integrated workflow",
+            "End-to-end test suite",
+            "Architecture and operator documentation"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "A mission can move from approved target to preserved observations and graph records.",
+            "All tool calls are mediated and auditable.",
+            "Harness-specific logic does not own evidence or scope policy."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P10",
+          "resource_ids": [
+            "claude-code",
+            "memgraph",
+            "orb"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 35,
+          "title": "Cross-layer seeded research case",
+          "objective": "Investigate a deliberately constructed local target containing software, binary, firmware and emulated-system elements.",
+          "competencies": [
+            "cross_layer_research",
+            "hypothesis_management",
+            "evidence_synthesis",
+            "independent_challenge",
+            "finding_lifecycle"
+          ],
+          "activities": [
+            "Define a bounded mission with seeded weaknesses and benign decoys.",
+            "Run inventory, source review, approved tests and firmware/emulation analysis.",
+            "Use independent review to challenge candidate findings.",
+            "Record confirmed, disproved and unresolved hypotheses distinctly."
+          ],
+          "deliverables": [
+            "Cross-layer research dossier",
+            "Evidence-linked graph",
+            "Finding and hypothesis ledger"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "All results remain within the local test range.",
+            "Findings are evidence-backed and independently reviewed.",
+            "Unresolved hypotheses remain unresolved."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P10",
+          "resource_ids": [
+            "qemu",
+            "renode",
+            "memgraph",
+            "orb"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        },
+        {
+          "week": 36,
+          "title": "Clean-room reproduction and release",
+          "objective": "Demonstrate that a second researcher can reproduce the key results and understand the platform's limitations.",
+          "competencies": [
+            "clean_room_reproduction",
+            "release_engineering",
+            "evidence_verification",
+            "research_reporting",
+            "roadmap_planning"
+          ],
+          "activities": [
+            "Restore a clean environment from documented artifacts and configuration.",
+            "Repeat selected experiments without relying on agent conversation history.",
+            "Verify evidence hashes, findings, patches and graph relationships.",
+            "Publish a release report, limitations, backlog and maintenance plan."
+          ],
+          "deliverables": [
+            "AEGIS v1.0 release candidate",
+            "Independent reproduction report",
+            "Final research dossier",
+            "Next-stage specialization backlog"
+          ],
+          "evidence_required": [
+            "Version-controlled source or configuration changes where applicable",
+            "A reproducible test or inspection record",
+            "Raw output or immutable artifact references with SHA-256 hashes",
+            "A concise research note distinguishing observations, hypotheses and conclusions"
+          ],
+          "acceptance_criteria": [
+            "Key findings reproduce from documented instructions and artifacts.",
+            "The report documents limitations and residual uncertainty.",
+            "The research platform passes scope and evidence-integrity checks."
+          ],
+          "agent_roles": [
+            "research_director",
+            "relevant_specialist",
+            "evidence_curator",
+            "independent_reviewer"
+          ],
+          "estimated_hours": 7,
+          "disclosure": {
+            "load": "This week's brief, required prerequisites, relevant standards and task-specific safety constraints.",
+            "do_not_load_by_default": "Detailed instructions for later weeks or phases.",
+            "next_unlock": "Unlock the next week's brief only after the exit gate is met or a human explicitly accepts a documented exception."
+          },
+          "phase_id": "P10",
+          "resource_ids": [
+            "claude-code",
+            "memgraph",
+            "orb"
+          ],
+          "model_routing": {
+            "planner": "opus_deep",
+            "implementation": "sonnet_default",
+            "triage_or_mechanical_support": null,
+            "reviewer": "opus_deep",
+            "independent_context_required": true,
+            "fable_advisor_eligible": true,
+            "mythos_default": false,
+            "escalation_rule": "Escalate to a higher-capability model when ambiguity, cross-component complexity, contradictory evidence or consequence exceeds the current model's demonstrated ability. Record any substitution."
+          },
+          "prerequisite": "Previous week acceptance gate passed"
+        }
+      ],
+      "exit_criteria": [
+        "Key findings reproduce from documented instructions and artifacts.",
+        "The report documents limitations and residual uncertainty.",
+        "The research platform passes scope and evidence-integrity checks."
+      ]
+    }
+  ],
+  "research_data_contract": {
+    "node_types": [
+      "Mission",
+      "Scope",
+      "Asset",
+      "Component",
+      "Package",
+      "SourceFile",
+      "Function",
+      "Binary",
+      "Firmware",
+      "Interface",
+      "AgentRun",
+      "Tool",
+      "Experiment",
+      "Observation",
+      "Hypothesis",
+      "Finding",
+      "Artifact",
+      "CWE",
+      "CVE",
+      "Patch",
+      "Review",
+      "ModelConfiguration"
+    ],
+    "relationship_types": [
+      "CONTAINS",
+      "DEPENDS_ON",
+      "IMPLEMENTS",
+      "EXPOSES",
+      "AUTHORIZED_BY",
+      "INVESTIGATES",
+      "USES_TOOL",
+      "PRODUCES",
+      "OBSERVES",
+      "SUPPORTS",
+      "CONTRADICTS",
+      "REPRODUCES",
+      "AFFECTS",
+      "CLASSIFIED_AS",
+      "MITIGATED_BY",
+      "REVIEWED_BY",
+      "DERIVED_FROM"
+    ],
+    "required_provenance_fields": [
+      "record_id",
+      "created_at",
+      "created_by_or_agent_run",
+      "mission_id",
+      "source_artifact_ids",
+      "schema_version"
+    ],
+    "finding_lifecycle": [
+      "candidate",
+      "under_investigation",
+      "reproduced",
+      "confirmed",
+      "disproved",
+      "fixed_pending_verification",
+      "fixed_verified",
+      "accepted_risk",
+      "withdrawn"
+    ],
+    "knowledge_state_types": {
+      "Observation": "Directly recorded behaviour or source fact, linked to raw evidence.",
+      "Hypothesis": "A proposed explanation or possible weakness requiring further testing.",
+      "Finding": "A reviewed conclusion with evidence, affected scope, impact rationale and verification state."
+    },
+    "edge_attributes": {
+      "confidence": "0.0 to 1.0 with method and author recorded",
+      "independent_observation_count": "Integer count of genuinely independent observations",
+      "reproducibility": "0.0 to 1.0 with experiment references",
+      "source_quality": "Categorical or scored with rationale",
+      "last_verified_at": "Timestamp",
+      "impact": "Separate severity or consequence field; never conflate with confidence"
+    },
+    "graph_rules": [
+      "Never store secrets, credentials or private keys in Memgraph.",
+      "Store raw files in the artifact store and references/hashes in the graph.",
+      "Model-generated statements are not independent evidence.",
+      "Multiple agents sharing the same model, context and evidence are not automatically independent corroboration.",
+      "Confidence, severity, recency and reproducibility are distinct dimensions.",
+      "Every confirmed finding must link to supporting evidence and a review record."
+    ]
+  },
+  "evidence_contract": {
+    "artifact_integrity": "SHA-256 or a stronger reviewed content hash; preserve original bytes where lawful and authorized.",
+    "minimum_run_metadata": [
+      "mission_id",
+      "scope_id",
+      "agent_run_id",
+      "agent_role",
+      "harness_name_and_version",
+      "model_id",
+      "effort_level",
+      "prompt_or_configuration_hash",
+      "tool_names_and_versions",
+      "target_snapshot_or_hash",
+      "start_and_end_time",
+      "exit_status",
+      "artifact_ids"
+    ],
+    "raw_and_derived_separation": true,
+    "reproducibility": "Record environment, inputs, exact target version, tool versions and steps sufficient for an independent researcher to repeat the experiment.",
+    "retention": "Retain evidence according to project policy and applicable law; redact sensitive data before indexing or sharing."
+  },
+  "evaluation": {
+    "benchmark_design": "Use fixed, versioned test cases containing seeded positive examples, benign decoys, incomplete evidence, contradictory evidence and synthetic prompt/tool injection cases.",
+    "metrics": [
+      "true_positive_rate_on_seeded_cases",
+      "false_positive_rate_on_seeded_cases",
+      "evidence_completeness",
+      "reproducibility",
+      "scope_compliance",
+      "tool_execution_correctness",
+      "reviewer_disagreement_rate",
+      "time_per_verified_result",
+      "cost_per_verified_result"
+    ],
+    "proposed_targets": {
+      "scope_compliance": 1.0,
+      "evidence_provenance_completeness": 1.0,
+      "seeded_defect_reproduction_rate": 0.9,
+      "seeded_case_classification_accuracy": 0.9,
+      "unsupported_confirmed_findings": 0,
+      "confirmed_findings_with_independent_review": 1.0
+    },
+    "interpretation": "Targets are internal engineering goals, not externally validated industry benchmarks. Report sample size and confidence intervals where meaningful.",
+    "hard_failures": [
+      "Any unauthorized scope expansion",
+      "Any unlogged consequential execution",
+      "Any fabricated evidence or falsely claimed tool success",
+      "Any confirmed finding without supporting provenance"
+    ],
+    "model_comparison": "Compare models on the same target snapshot, test cases, tool versions, harness capabilities and effort settings. Report model and harness contributions separately."
+  },
+  "resource_library": [
+    {
+      "id": "claude-code",
+      "topic": "Agent harness",
+      "name": "Claude Code documentation and power-user guidance",
+      "url": "https://docs.anthropic.com/en/docs/claude-code/overview",
+      "priority": "essential",
+      "update_policy": "Check current official docs and release notes monthly."
+    },
+    {
+      "id": "claude-models",
+      "topic": "Model routing",
+      "name": "Claude Code model configuration",
+      "url": "https://support.claude.com/en/articles/11940350-claude-code-model-configuration",
+      "priority": "essential",
+      "update_policy": "Check live model availability with /model before relying on an ID."
+    },
+    {
+      "id": "mcp",
+      "topic": "Tool interoperability",
+      "name": "Model Context Protocol specification",
+      "url": "https://modelcontextprotocol.io/specification/",
+      "priority": "essential",
+      "update_policy": "Track specification changes, security guidance and SDK compatibility."
+    },
+    {
+      "id": "pwn-college",
+      "topic": "Systems and binary security",
+      "name": "pwn.college",
+      "url": "https://pwn.college/",
+      "priority": "essential"
+    },
+    {
+      "id": "ost2",
+      "topic": "Systems and architecture",
+      "name": "OpenSecurityTraining2",
+      "url": "https://ost2.fyi/",
+      "priority": "essential"
+    },
+    {
+      "id": "beej-network",
+      "topic": "Networking",
+      "name": "Beej's Guide to Network Programming",
+      "url": "https://beej.us/guide/bgnet/",
+      "priority": "recommended"
+    },
+    {
+      "id": "portswigger",
+      "topic": "Application security",
+      "name": "PortSwigger Web Security Academy",
+      "url": "https://portswigger.net/web-security/learning-paths",
+      "priority": "essential"
+    },
+    {
+      "id": "owasp-asvs",
+      "topic": "Application security assurance",
+      "name": "OWASP Application Security Verification Standard",
+      "url": "https://asvs.owasp.org/",
+      "priority": "essential"
+    },
+    {
+      "id": "semgrep",
+      "topic": "Static analysis",
+      "name": "Semgrep documentation",
+      "url": "https://semgrep.dev/docs/",
+      "priority": "recommended"
+    },
+    {
+      "id": "syft",
+      "topic": "Software supply chain",
+      "name": "Syft SBOM generator",
+      "url": "https://github.com/anchore/syft",
+      "priority": "recommended"
+    },
+    {
+      "id": "osv-scanner",
+      "topic": "Software supply chain",
+      "name": "OSV-Scanner",
+      "url": "https://google.github.io/osv-scanner/",
+      "priority": "recommended"
+    },
+    {
+      "id": "aflpp",
+      "topic": "Fuzzing",
+      "name": "AFL++ documentation",
+      "url": "https://aflplus.plus/docs/",
+      "priority": "essential"
+    },
+    {
+      "id": "oss-fuzz",
+      "topic": "Fuzzing",
+      "name": "OSS-Fuzz",
+      "url": "https://google.github.io/oss-fuzz/",
+      "priority": "recommended"
+    },
+    {
+      "id": "libfuzzer",
+      "topic": "Fuzzing",
+      "name": "LLVM libFuzzer",
+      "url": "https://llvm.org/docs/LibFuzzer.html",
+      "priority": "recommended"
+    },
+    {
+      "id": "ghidra",
+      "topic": "Reverse engineering",
+      "name": "Ghidra",
+      "url": "https://ghidra-sre.org/",
+      "priority": "essential"
+    },
+    {
+      "id": "qemu",
+      "topic": "System emulation",
+      "name": "QEMU system emulation documentation",
+      "url": "https://www.qemu.org/docs/master/system/index.html",
+      "priority": "essential"
+    },
+    {
+      "id": "renode",
+      "topic": "Embedded emulation",
+      "name": "Renode documentation",
+      "url": "https://renode.readthedocs.io/en/latest/",
+      "priority": "essential"
+    },
+    {
+      "id": "emba",
+      "topic": "Firmware analysis",
+      "name": "EMBA",
+      "url": "https://github.com/e-m-b-a/emba",
+      "priority": "recommended"
+    },
+    {
+      "id": "binwalk",
+      "topic": "Firmware analysis",
+      "name": "Binwalk",
+      "url": "https://github.com/ReFirmLabs/binwalk",
+      "priority": "recommended"
+    },
+    {
+      "id": "memgraph",
+      "topic": "Graph database",
+      "name": "Memgraph documentation",
+      "url": "https://memgraph.com/docs",
+      "priority": "essential"
+    },
+    {
+      "id": "orb",
+      "topic": "Graph visualization",
+      "name": "Orb documentation",
+      "url": "https://memgraph.github.io/orb/",
+      "priority": "essential"
+    }
+  ],
+  "maintenance": {
+    "review_cadence": "Monthly",
+    "review_topics": [
+      "Claude model availability and model IDs",
+      "Claude Code features, hooks, skills and subagents",
+      "MCP specification and SDK changes",
+      "Security training resources and standards",
+      "Fuzzing and source-analysis tools",
+      "QEMU and Renode releases",
+      "Firmware analysis tooling",
+      "Memgraph and Orb compatibility",
+      "Responsible disclosure guidance"
+    ],
+    "update_rules": [
+      "Prefer primary documentation, release notes, advisories and research publications.",
+      "Record publication date separately from event or release date.",
+      "Verify compatibility against pinned versions before changing the stack.",
+      "Do not update model defaults or tools solely because a newer version exists; benchmark material changes first.",
+      "Preserve prior configuration and migration notes."
+    ]
+  },
+  "completion_definition": {
+    "core_outcome": "A working research workbench that can accept an authorized mission, inspect a local software or emulated hardware target, run approved analysis, preserve immutable evidence, distinguish observations from hypotheses and confirmed findings, obtain independent review, and visualize provenance-rich relationships in Memgraph and Orb.",
+    "researcher_outcome": "The researcher can independently explain system behaviour, evaluate candidate weaknesses, reproduce and root-cause controlled defects, validate mitigations and communicate limitations without relying on model authority.",
+    "not_claimed": "Completion does not imply mastery of every security discipline, proof of physical hardware properties from emulation, or authorization to test external systems."
+  },
+  "agent_roles": {
+    "research_director": {
+      "purpose": "Coordinate the active mission and keep work aligned with the project goal.",
+      "responsibilities": [
+        "Load the active phase and week brief",
+        "Decompose authorized objectives into bounded tasks",
+        "Track dependencies, gates and unresolved questions",
+        "Request human approval when required"
+      ],
+      "must_not": [
+        "Expand scope",
+        "Self-authorize consequential execution",
+        "Promote hypotheses to confirmed findings"
+      ],
+      "recommended_model": "opus_deep"
+    },
+    "systems_analyst": {
+      "purpose": "Build evidence-backed models of hosts, processes, components, interfaces and trust boundaries.",
+      "responsibilities": [
+        "Inventory approved systems",
+        "Map dependencies and interfaces",
+        "Identify unknowns and assumptions"
+      ],
+      "must_not": [
+        "Probe outside the authorized target",
+        "Infer unobserved configuration as fact"
+      ],
+      "recommended_model": "sonnet_default"
+    },
+    "source_analyst": {
+      "purpose": "Examine source code, data flows, dependencies and candidate weaknesses.",
+      "responsibilities": [
+        "Map source locations and code paths",
+        "Correlate static-analysis output with source context",
+        "Propose testable hypotheses"
+      ],
+      "must_not": [
+        "Treat scanner alerts as confirmed vulnerabilities",
+        "Modify target code without an approved task"
+      ],
+      "recommended_model": "sonnet_default"
+    },
+    "software_analyst": {
+      "purpose": "Evaluate application and API behaviour in authorized training environments.",
+      "responsibilities": [
+        "Map application trust boundaries",
+        "Compare observed and expected behaviour",
+        "Document reproducible findings and mitigations"
+      ],
+      "must_not": [
+        "Test unapproved services",
+        "Use real user data or credentials"
+      ],
+      "recommended_model": "sonnet_default"
+    },
+    "hardware_analyst": {
+      "purpose": "Inspect firmware and emulated hardware platforms while documenting simulation limits.",
+      "responsibilities": [
+        "Inventory firmware and emulated components",
+        "Map boot stages and interfaces",
+        "Correlate hardware and software relationships"
+      ],
+      "must_not": [
+        "Claim physical properties from emulation alone",
+        "Modify real hardware outside explicit authorization"
+      ],
+      "recommended_model": "opus_deep"
+    },
+    "experiment_planner": {
+      "purpose": "Convert hypotheses into bounded, falsifiable and reproducible experiment proposals.",
+      "responsibilities": [
+        "State hypothesis and expected observations",
+        "Specify target, inputs, controls and stop conditions",
+        "Identify required evidence and rollback needs"
+      ],
+      "must_not": [
+        "Execute experiments",
+        "Change mission scope",
+        "Omit potential side effects"
+      ],
+      "recommended_model": "opus_deep"
+    },
+    "tool_operator": {
+      "purpose": "Execute only approved tool requests through the controlled worker and tool broker.",
+      "responsibilities": [
+        "Validate request schema",
+        "Enforce allowlists and approval state",
+        "Capture exit status, raw output and artifacts"
+      ],
+      "must_not": [
+        "Accept direct agent authority as approval",
+        "Run arbitrary shell or network actions outside policy"
+      ],
+      "recommended_model": "sonnet_default"
+    },
+    "independent_reviewer": {
+      "purpose": "Challenge evidence, reproduce claims where appropriate and identify unsupported conclusions.",
+      "responsibilities": [
+        "Review raw evidence independently",
+        "Seek disconfirming evidence",
+        "Check reproducibility, impact rationale and remediation",
+        "Record agreement or dissent"
+      ],
+      "must_not": [
+        "Rely solely on the originating agent's summary",
+        "Silently rewrite the original evidence"
+      ],
+      "recommended_model": "opus_deep"
+    },
+    "evidence_curator": {
+      "purpose": "Preserve immutable artifacts and complete provenance records.",
+      "responsibilities": [
+        "Hash and store raw artifacts",
+        "Validate manifests and required metadata",
+        "Link artifacts to missions, runs and observations"
+      ],
+      "must_not": [
+        "Alter original artifacts",
+        "Store secrets in the evidence index or graph"
+      ],
+      "recommended_model": "haiku_fast"
+    },
+    "graph_steward": {
+      "purpose": "Maintain the Memgraph schema and ensure relationships are meaningful, sourced and queryable.",
+      "responsibilities": [
+        "Validate node and edge contracts",
+        "Preserve confidence, severity and recency as separate fields",
+        "Manage ingestion and graph quality checks"
+      ],
+      "must_not": [
+        "Create unsupported relationships",
+        "Convert agent repetition into independent evidence"
+      ],
+      "recommended_model": "sonnet_default"
+    },
+    "harness_engineer": {
+      "purpose": "Maintain Claude Code integration and portable adapters without coupling the research core to one harness.",
+      "responsibilities": [
+        "Maintain skills, hooks, agent definitions and adapters",
+        "Keep policy and evidence functions in the core",
+        "Run adapter conformance tests"
+      ],
+      "must_not": [
+        "Treat harness prompts as the only security boundary",
+        "Hardcode unavailable model IDs"
+      ],
+      "recommended_model": "sonnet_default"
+    },
+    "policy_engine": {
+      "purpose": "Apply deterministic authorization, scope and execution rules outside the model.",
+      "responsibilities": [
+        "Validate mission and scope receipts",
+        "Allow or deny tool requests",
+        "Require approval for protected operations",
+        "Record policy decisions"
+      ],
+      "must_not": [
+        "Infer authorization from user intent alone when a scope receipt is required",
+        "Allow agents to alter policy state"
+      ],
+      "recommended_model": "deterministic_code_first"
+    }
+  },
+  "canonical_record_contracts": {
+    "Mission": {
+      "required": [
+        "mission_id",
+        "title",
+        "target_asset_ids",
+        "scope_id",
+        "objectives",
+        "allowed_actions",
+        "excluded_actions",
+        "start_time",
+        "expiry_time",
+        "stop_conditions",
+        "approval_state",
+        "created_by",
+        "schema_version"
+      ],
+      "notes": "Defines the authorized task and boundaries. It is not itself proof that every proposed operation is permitted."
+    },
+    "ToolRequest": {
+      "required": [
+        "request_id",
+        "mission_id",
+        "agent_run_id",
+        "tool_id",
+        "target_asset_id",
+        "operation",
+        "parameters",
+        "declared_side_effects",
+        "expected_artifacts",
+        "approval_requirement",
+        "created_at",
+        "schema_version"
+      ],
+      "notes": "A proposal submitted to the tool broker. The policy engine supplies the final decision; agents cannot set an allow decision."
+    },
+    "AgentRun": {
+      "required": [
+        "agent_run_id",
+        "mission_id",
+        "agent_role",
+        "harness_name",
+        "harness_version",
+        "model_id",
+        "effort_level",
+        "prompt_config_hash",
+        "tool_versions",
+        "target_snapshot_hash",
+        "start_time",
+        "end_time",
+        "outcome",
+        "artifact_ids",
+        "schema_version"
+      ],
+      "notes": "Captures model and harness provenance so results can be reproduced and compared."
+    },
+    "Observation": {
+      "required": [
+        "observation_id",
+        "mission_id",
+        "agent_run_id",
+        "target_asset_id",
+        "observed_at",
+        "observation_type",
+        "description",
+        "method",
+        "source_artifact_ids",
+        "direct_or_derived",
+        "schema_version"
+      ],
+      "notes": "Records what was directly observed or derived. It is not automatically a vulnerability."
+    },
+    "Hypothesis": {
+      "required": [
+        "hypothesis_id",
+        "mission_id",
+        "statement",
+        "basis_observation_ids",
+        "supporting_artifact_ids",
+        "contradicting_artifact_ids",
+        "proposed_tests",
+        "status",
+        "created_at",
+        "schema_version"
+      ],
+      "notes": "An explanation requiring further testing. Preserve contradictory evidence and unresolved status."
+    },
+    "Finding": {
+      "required": [
+        "finding_id",
+        "mission_id",
+        "affected_asset_ids",
+        "affected_component_ids",
+        "weakness_classification",
+        "preconditions",
+        "impact_rationale",
+        "supporting_artifact_ids",
+        "reproduction_experiment_ids",
+        "verification_state",
+        "review_id",
+        "remediation",
+        "created_at",
+        "schema_version"
+      ],
+      "notes": "A reviewed security conclusion. Confirmation requires evidence and independent review; a model score alone is insufficient."
+    },
+    "Artifact": {
+      "required": [
+        "artifact_id",
+        "sha256",
+        "media_type",
+        "byte_length",
+        "storage_uri",
+        "source_tool_or_agent",
+        "mission_id",
+        "agent_run_id",
+        "created_at",
+        "integrity_verified",
+        "schema_version"
+      ],
+      "notes": "Immutable original or derived research file. Preserve raw and transformed artifacts separately."
+    },
+    "Review": {
+      "required": [
+        "review_id",
+        "subject_type",
+        "subject_id",
+        "reviewer_run_id",
+        "review_method",
+        "evidence_examined",
+        "outcome",
+        "dissent",
+        "reviewed_at",
+        "schema_version"
+      ],
+      "notes": "Records reviewer independence, evidence examined and any disagreement."
+    },
+    "PhaseTransition": {
+      "required": [
+        "transition_id",
+        "from_phase_id",
+        "to_phase_id",
+        "gate_results",
+        "unresolved_issues",
+        "reviewer_id",
+        "human_approval",
+        "approved_at",
+        "schema_version"
+      ],
+      "notes": "Controls curriculum progression. A transition does not grant new target authorization."
+    }
+  },
+  "agent_context_contract": {
+    "input_context_required": [
+      "project.goal",
+      "agent_operating_contract",
+      "active_mission",
+      "active_phase",
+      "active_week",
+      "relevant_schema_versions",
+      "relevant_resource_ids",
+      "current_state_summary",
+      "open_hypotheses",
+      "pending_reviews"
+    ],
+    "agent_output_required": [
+      "task_status",
+      "actions_proposed_or_performed",
+      "tool_request_ids",
+      "observations",
+      "hypotheses",
+      "artifact_ids",
+      "uncertainties",
+      "scope_or_policy_events",
+      "next_recommended_step"
+    ],
+    "output_rule": "All outputs must conform to the task's declared schema. Missing data must be null, unknown or explicitly omitted according to the schema; never fabricate values.",
+    "memory_rule": "Persist concise state summaries and artifact references. Do not treat chat history as the canonical research record."
+  }
+}
