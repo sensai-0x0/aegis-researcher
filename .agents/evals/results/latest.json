@@ -1,0 +1,236 @@
+{
+  "timestamp": "2026-11-17T00:46:43+1030",
+  "commit": "c8c0064",
+  "overall": {
+    "passed": 3,
+    "total": 29,
+    "rate": 0.103
+  },
+  "suites": {
+    "safety": {
+      "passed": 2,
+      "total": 5,
+      "rate": 0.4,
+      "gate": 1.0,
+      "met": false
+    },
+    "contracts": {
+      "passed": 0,
+      "total": 6,
+      "rate": 0.0,
+      "gate": 1.0,
+      "met": false
+    },
+    "process": {
+      "passed": 1,
+      "total": 3,
+      "rate": 0.333,
+      "gate": 1.0,
+      "met": false
+    },
+    "harness": {
+      "passed": 0,
+      "total": 7,
+      "rate": 0.0,
+      "gate": 1.0,
+      "met": false
+    },
+    "evidence": {
+      "passed": 0,
+      "total": 3,
+      "rate": 0.0,
+      "gate": 0.9,
+      "met": false
+    },
+    "graph": {
+      "passed": 0,
+      "total": 3,
+      "rate": 0.0,
+      "gate": 0.8,
+      "met": false
+    },
+    "research": {
+      "passed": 0,
+      "total": 2,
+      "rate": 0.0,
+      "gate": 0.5,
+      "met": false
+    }
+  },
+  "heuristics": [
+    {
+      "id": "harness.claude-md-contract",
+      "capability": "harness",
+      "passed": false,
+      "detail": "CLAUDE.md missing"
+    },
+    {
+      "id": "harness.pyproject-valid",
+      "capability": "harness",
+      "passed": false,
+      "detail": "pyproject.toml missing"
+    },
+    {
+      "id": "harness.readme-architecture",
+      "capability": "harness",
+      "passed": false,
+      "detail": "README.md missing"
+    },
+    {
+      "id": "harness.rules-nonempty",
+      "capability": "harness",
+      "passed": false,
+      "detail": "research.md missing; evidence.md missing; scope.md missing"
+    },
+    {
+      "id": "harness.skills-frontmatter",
+      "capability": "harness",
+      "passed": false,
+      "detail": ".claude/skills/inventory/SKILL.md missing; .claude/skills/source-review/SKILL.md missing; .claude/skills/finding-triage/SKILL.md missing"
+    },
+    {
+      "id": "harness.agents-frontmatter",
+      "capability": "harness",
+      "passed": false,
+      "detail": ".claude/agents/systems-analyst.md missing; .claude/agents/source-analyst.md missing; .claude/agents/reviewer.md missing; .claude/agents/evidence-curator.md missing"
+    },
+    {
+      "id": "harness.settings-json-valid",
+      "capability": "harness",
+      "passed": false,
+      "detail": "settings.json missing"
+    },
+    {
+      "id": "contracts.all-parse",
+      "capability": "contracts",
+      "passed": false,
+      "detail": "mission: Expecting value: line 1 column 1 (char 0); run: Expecting value: line 1 column 1 (char 0); observation: Expecting value: line 1 column 1 (char 0); finding: Expecting value: line 1 column 1 (char 0); artifact: Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "id": "contracts.draft-2020-12",
+      "capability": "contracts",
+      "passed": false,
+      "detail": "mission not draft 2020-12; run not draft 2020-12; observation not draft 2020-12; finding not draft 2020-12; artifact not draft 2020-12"
+    },
+    {
+      "id": "contracts.epistemic-ladder",
+      "capability": "contracts",
+      "passed": false,
+      "detail": "missing statuses: ['observation', 'hypothesis', 'confirmed', 'rejected']"
+    },
+    {
+      "id": "contracts.observation-evidence",
+      "capability": "contracts",
+      "passed": false,
+      "detail": "observation schema missing"
+    },
+    {
+      "id": "contracts.artifact-hash",
+      "capability": "contracts",
+      "passed": false,
+      "detail": "artifact schema missing sha256"
+    },
+    {
+      "id": "contracts.no-open-objects",
+      "capability": "contracts",
+      "passed": false,
+      "detail": "mission not closed; run not closed; observation not closed; finding not closed; artifact not closed"
+    },
+    {
+      "id": "safety.no-hardcoded-secrets",
+      "capability": "safety",
+      "passed": true,
+      "detail": "no credential-shaped strings"
+    },
+    {
+      "id": "safety.no-undocumented-addresses",
+      "capability": "safety",
+      "passed": true,
+      "detail": "only documentation/private ranges"
+    },
+    {
+      "id": "safety.scope-deny-by-default",
+      "capability": "safety",
+      "passed": false,
+      "detail": "core/scope.py missing"
+    },
+    {
+      "id": "safety.policy-approval-gating",
+      "capability": "safety",
+      "passed": false,
+      "detail": "core/policy.py missing"
+    },
+    {
+      "id": "safety.audit-append-only",
+      "capability": "safety",
+      "passed": false,
+      "detail": "core/audit.py missing"
+    },
+    {
+      "id": "evidence.manifests-documented",
+      "capability": "evidence",
+      "passed": false,
+      "detail": "manifests README missing"
+    },
+    {
+      "id": "evidence.objects-immutability",
+      "capability": "evidence",
+      "passed": false,
+      "detail": "objects README missing"
+    },
+    {
+      "id": "evidence.observation-no-claims",
+      "capability": "evidence",
+      "passed": false,
+      "detail": "observation schema missing"
+    },
+    {
+      "id": "graph.constraints-defined",
+      "capability": "graph",
+      "passed": false,
+      "detail": "schema.cypher missing"
+    },
+    {
+      "id": "graph.queries-present",
+      "capability": "graph",
+      "passed": false,
+      "detail": "0/5 queries"
+    },
+    {
+      "id": "graph.ingest-idempotent",
+      "capability": "graph",
+      "passed": false,
+      "detail": "graph/ingest.py missing"
+    },
+    {
+      "id": "process.progress-ledger-current",
+      "capability": "process",
+      "passed": false,
+      "detail": "iteration counter invalid (0)"
+    },
+    {
+      "id": "process.decision-log-appended",
+      "capability": "process",
+      "passed": false,
+      "detail": "decision log not appended beyond baseline"
+    },
+    {
+      "id": "process.errors-ledger",
+      "capability": "process",
+      "passed": true,
+      "detail": "entry format defined"
+    },
+    {
+      "id": "research.test-cases-present",
+      "capability": "research",
+      "passed": false,
+      "detail": "no research test cases"
+    },
+    {
+      "id": "research.expected-results",
+      "capability": "research",
+      "passed": false,
+      "detail": "no expected results"
+    }
+  ]
+}
