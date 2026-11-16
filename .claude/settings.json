@@ -1,0 +1,43 @@
+{
+  "description": "AEGIS agent permissions. Deny-by-default posture mirrors core/scope.py. Any rule change must be committed with rationale in .agents/evals/progress.md Decision Log.",
+  "permissions": {
+    "allow": [
+      "Read(//**)",
+      "Grep",
+      "Glob",
+      "Edit(core/**)",
+      "Edit(contracts/**)",
+      "Edit(graph/queries/**)",
+      "Edit(.agents/evals/**)",
+      "Edit(workers/**)",
+      "Edit(evidence/manifests/**)",
+      "Bash(python3 .agents/evals/eval-suite/run_evals.py*)",
+      "Bash(python3 -m pytest*)",
+      "Bash(python3 contracts/validate_fixtures.py*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)"
+    ],
+    "ask": [
+      "Edit(evidence/objects/**)",
+      "Bash(python3 -m workers.*)",
+      "Bash(python3 -m aegis.adapters.cli*)",
+      "WebFetch",
+      "Edit(reports/**)",
+      "Bash(git push*)"
+    ],
+    "deny": [
+      "Edit(.agents/evals/goal.md)",
+      "Edit(core/audit.py:delete)",
+      "Bash(git push --force*)",
+      "Bash(rm -rf /*)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)"
+    ]
+  },
+  "hooks": {
+    "notes": "Pre-tool-use hook SHOULD call core/policy.py classification before any workers/*/ execution. Consequential => ask, never auto-approve."
+  }
+}
