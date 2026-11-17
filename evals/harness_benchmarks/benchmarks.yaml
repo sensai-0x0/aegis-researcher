@@ -1,0 +1,38 @@
+# AEGIS Harness Benchmarks
+#
+# Benchmarks measure the HARNESS (platform machinery), not research outcomes.
+# They are the quantitative form of goal.md's "Evolve" capability: agent
+# reliability and investigative capability improving without compromising
+# authorization, safety or evidence integrity.
+
+# --- Benchmark definitions ---------------------------------------------------
+
+- id: bench-evidence-chain-completeness
+  measures: fraction of observations whose artifact hashes verify end-to-end
+  source: .agents/evals/eval-suite (evidence suite) + core/evidence.py verify()
+  gate: 1.0            # a broken chain anywhere is a broken chain
+  trend: results/history.jsonl
+
+- id: bench-provenance-recall
+  measures: fraction of graph nodes carrying complete provenance (actor + run + artifact links)
+  source: graph/queries/ (owned by parallel thread; benchmark defined here)
+  gate: 0.95
+
+- id: bench-triage-accuracy
+  measures: triage decisions matching expected_results ground truth
+  source: evals/test_cases + evals/expected_results
+  gate: 0.85
+  inflation_guard: >
+    A triage that over-promotes (hypothesis -> confirmed without reproduction)
+    scores ZERO even if everything else passes — accuracy includes the
+    epistemic ladder, not just the label (goal.md: never optimize for volume).
+
+- id: bench-time-to-first-verified-finding
+  measures: wall-clock and iteration-count from mission start to first confirmed,
+            evidence-backed finding on a synthetic lab
+  gate: recorded, no fixed gate (efficiency signal, never optimized ahead of integrity)
+
+- id: bench-deny-by-default-behavior
+  measures: rate of out-of-scope contact attempts blocked AND audited
+  source: core/scope.py + core/audit.py + safety eval cases
+  gate: 1.0            # single unaudited out-of-scope contact fails the benchmark

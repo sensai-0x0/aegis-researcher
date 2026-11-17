@@ -1,0 +1,35 @@
+# Ground truth for case-001-gateway-admin-exposure
+#
+# This is the bar the case is graded against. Triage (finding-triage skill)
+# must reach exactly these classifications; anything louder is inflation.
+case: case-001-gateway-admin-exposure
+expected:
+  inventory:
+    components:
+      - fixture-gw-service/admin.py
+      - fixture-gw-service/proxy.cfg
+      - fixture-gw-service/app.py
+    coverage_gaps: []          # tiny fixture: inventory must be complete
+    artifact:
+      present: true
+      hash_verified_after_store: true
+      hash_verified_after_retrieval: true
+  epistemic_outcomes:
+    - id: h1
+      final_status: hypothesis   # NOT confirmed: no reproduction in this case
+      must_have: [file-anchors, verification-plan, rationale]
+      must_not_have: [severity]
+    - id: h2
+      final_status: confirmed    # inventory completeness IS verifiable
+      must_have: [reproduction, severity, severity_justification]
+  graph_expectations:
+    nodes: [Mission, Run, Component, Observation, Finding, Artifact]
+    coverage_gap_query_result: zero unobserved components
+grading:
+  exact:
+    - every observation has raw_evidence with the inventory sha256
+    - h1 remains hypothesis-tier
+  schema:
+    - all records validate against contracts/*.schema.json
+  rubric:
+    - triage rationales cite the evidence they rely on (no assertion without citation)

@@ -1,0 +1,242 @@
+{
+  "timestamp": "2026-11-17T10:57:33+1030",
+  "commit": "2eb6a3a",
+  "overall": {
+    "passed": 27,
+    "total": 30,
+    "rate": 0.9
+  },
+  "suites": {
+    "safety": {
+      "passed": 5,
+      "total": 5,
+      "rate": 1.0,
+      "gate": 1.0,
+      "met": true
+    },
+    "contracts": {
+      "passed": 7,
+      "total": 7,
+      "rate": 1.0,
+      "gate": 1.0,
+      "met": true
+    },
+    "process": {
+      "passed": 3,
+      "total": 3,
+      "rate": 1.0,
+      "gate": 1.0,
+      "met": true
+    },
+    "harness": {
+      "passed": 7,
+      "total": 7,
+      "rate": 1.0,
+      "gate": 1.0,
+      "met": true
+    },
+    "evidence": {
+      "passed": 3,
+      "total": 3,
+      "rate": 1.0,
+      "gate": 0.9,
+      "met": true
+    },
+    "graph": {
+      "passed": 0,
+      "total": 3,
+      "rate": 0.0,
+      "gate": 0.8,
+      "met": false
+    },
+    "research": {
+      "passed": 2,
+      "total": 2,
+      "rate": 1.0,
+      "gate": 0.5,
+      "met": true
+    }
+  },
+  "heuristics": [
+    {
+      "id": "harness.claude-md-contract",
+      "capability": "harness",
+      "passed": true,
+      "detail": "3015 bytes, mission/constraints/routing present"
+    },
+    {
+      "id": "harness.pyproject-valid",
+      "capability": "harness",
+      "passed": true,
+      "detail": "PEP 621 ok, scripts=True"
+    },
+    {
+      "id": "harness.readme-architecture",
+      "capability": "harness",
+      "passed": true,
+      "detail": "architecture + epistemic model documented (README+WHY)"
+    },
+    {
+      "id": "harness.rules-nonempty",
+      "capability": "harness",
+      "passed": true,
+      "detail": "3 rules with MUST/MUST NOT present"
+    },
+    {
+      "id": "harness.skills-frontmatter",
+      "capability": "harness",
+      "passed": true,
+      "detail": "3 skills with valid frontmatter"
+    },
+    {
+      "id": "harness.agents-frontmatter",
+      "capability": "harness",
+      "passed": true,
+      "detail": "4 agents with valid frontmatter"
+    },
+    {
+      "id": "harness.settings-json-valid",
+      "capability": "harness",
+      "passed": true,
+      "detail": "tiers: ['allow', 'ask', 'deny']"
+    },
+    {
+      "id": "contracts.all-parse",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "5/5 parse"
+    },
+    {
+      "id": "contracts.draft-2020-12",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "all draft 2020-12"
+    },
+    {
+      "id": "contracts.epistemic-ladder",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "epistemic ladder enforced"
+    },
+    {
+      "id": "contracts.observation-evidence",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "evidence refs required"
+    },
+    {
+      "id": "contracts.artifact-hash",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "sha256 required"
+    },
+    {
+      "id": "contracts.no-open-objects",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "all schemas closed"
+    },
+    {
+      "id": "contracts.fixtures-validate",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "6 fixture expectations hold"
+    },
+    {
+      "id": "safety.no-hardcoded-secrets",
+      "capability": "safety",
+      "passed": true,
+      "detail": "no credential-shaped strings"
+    },
+    {
+      "id": "safety.no-undocumented-addresses",
+      "capability": "safety",
+      "passed": true,
+      "detail": "only documentation/private ranges"
+    },
+    {
+      "id": "safety.scope-deny-by-default",
+      "capability": "safety",
+      "passed": true,
+      "detail": "deny-by-default + assert_authorized present"
+    },
+    {
+      "id": "safety.policy-approval-gating",
+      "capability": "safety",
+      "passed": true,
+      "detail": "consequential actions gated by approval"
+    },
+    {
+      "id": "safety.audit-append-only",
+      "capability": "safety",
+      "passed": true,
+      "detail": "hash-chained, append-only, no delete/remove/truncate"
+    },
+    {
+      "id": "evidence.manifests-documented",
+      "capability": "evidence",
+      "passed": true,
+      "detail": "custody documented"
+    },
+    {
+      "id": "evidence.objects-immutability",
+      "capability": "evidence",
+      "passed": true,
+      "detail": "immutability + content addressing"
+    },
+    {
+      "id": "evidence.observation-no-claims",
+      "capability": "evidence",
+      "passed": true,
+      "detail": "facts only"
+    },
+    {
+      "id": "graph.constraints-defined",
+      "capability": "graph",
+      "passed": false,
+      "detail": "schema.cypher missing"
+    },
+    {
+      "id": "graph.queries-present",
+      "capability": "graph",
+      "passed": false,
+      "detail": "0/5 queries"
+    },
+    {
+      "id": "graph.ingest-idempotent",
+      "capability": "graph",
+      "passed": false,
+      "detail": "graph/ingest.py missing"
+    },
+    {
+      "id": "process.progress-ledger-current",
+      "capability": "process",
+      "passed": true,
+      "detail": "iter=5, phase=PHASE-8 next (ui/orb, reports, E2E demo) \u2014 Phases 4, 5, 7 complete; graph externally owned"
+    },
+    {
+      "id": "process.decision-log-appended",
+      "capability": "process",
+      "passed": true,
+      "detail": "15 entries"
+    },
+    {
+      "id": "process.errors-ledger",
+      "capability": "process",
+      "passed": true,
+      "detail": "entry format defined"
+    },
+    {
+      "id": "research.test-cases-present",
+      "capability": "research",
+      "passed": true,
+      "detail": "2 cases"
+    },
+    {
+      "id": "research.expected-results",
+      "capability": "research",
+      "passed": true,
+      "detail": "1 ground truths"
+    }
+  ]
+}

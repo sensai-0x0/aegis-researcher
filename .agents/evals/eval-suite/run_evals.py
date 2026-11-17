@@ -103,9 +103,12 @@ def h_pyproject() -> tuple[bool, str]:
 
 
 def h_readme() -> tuple[bool, str]:
-    t = read("README.md")
-    if not t:
-        return False, "README.md missing"
+    # The user split docs: README.md = brief front door, WHY.md = detailed picture.
+    # Epistemic/architecture content may live in either.
+    parts = [(read("README.md") or ""), (read("WHY.md") or "")]
+    t = "\n".join(parts)
+    if not t.strip():
+        return False, "README.md and WHY.md missing"
     low = t.lower()
     checks = {
         "architecture": "architecture" in low or "data flow" in low or "──" in t or "→" in t,
@@ -113,8 +116,8 @@ def h_readme() -> tuple[bool, str]:
     }
     failed = [k for k, v in checks.items() if not v]
     if failed:
-        return False, f"missing: {failed}"
-    return True, "architecture + epistemic model documented"
+        return False, f"missing (across README/WHY): {failed}"
+    return True, "architecture + epistemic model documented (README+WHY)"
 
 
 def _frontmatter(rel: str, required_keys: tuple[str, ...]) -> tuple[bool, str]:
@@ -224,6 +227,17 @@ def h_observation_evidence() -> tuple[bool, str]:
 def h_artifact_hash() -> tuple[bool, str]:
     t = read("contracts/artifact.schema.json") or ""
     return ("sha256" in t and "required" in t), "sha256 required" if "sha256" in t else "artifact schema missing sha256"
+
+
+def h_fixtures_validate() -> tuple[bool, str]:
+    proc = subprocess.run(
+        [sys.executable, str(ROOT / "contracts" / "validate_fixtures.py")],
+        capture_output=True, text=True, cwd=ROOT,
+    )
+    if proc.returncode != 0:
+        return False, proc.stdout.strip()[-300:] or proc.stderr.strip()[-300:]
+    n = proc.stdout.count("[PASS]")
+    return True, f"{n} fixture expectations hold"
 
 
 def h_contracts_closed() -> tuple[bool, str]:
@@ -415,6 +429,7 @@ CHECKS = {
     "contracts.observation-evidence": h_observation_evidence,
     "contracts.artifact-hash": h_artifact_hash,
     "contracts.no-open-objects": h_contracts_closed,
+    "contracts.fixtures-validate": h_fixtures_validate,
     "safety.no-hardcoded-secrets": h_no_secrets,
     "safety.no-undocumented-addresses": h_no_real_addresses,
     "safety.scope-deny-by-default": h_scope_deny_default,

@@ -25,6 +25,7 @@ evidence/objects/**
 # --- Reports: rendered output not tracked; templates are ---
 reports/*.pdf
 reports/*.html
+reports/out/
 
 # --- Graph: local dumps ---
 graph/*.dump

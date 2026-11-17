@@ -1,0 +1,12 @@
+{
+  "finding_id": "55555555-5555-4555-8555-555555555555",
+  "title": "NEGATIVE FIXTURE: confirmed status without reproduction must be rejected",
+  "status": "confirmed",
+  "affected_component": { "identifier": "gw-service" },
+  "severity": "critical",
+  "severity_justification": null,
+  "claim": "A confirmed finding that never cites a reproduction step.",
+  "evidence": ["eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"],
+  "created_at": "2026-11-17T03:00:00Z",
+  "provenance": { "originated_by": "eval-harness" }
+}

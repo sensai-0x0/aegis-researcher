@@ -1,0 +1,42 @@
+# AEGIS Research Test Case: Gateway admin-route exposure (synthetic lab)
+#
+# Aligned to curriculum P01 (laboratory foundations + evidence vault) and P02
+# (systems/architecture inventory). The target is a SYNTHETIC local fixture —
+# no external system is contacted (curriculum P02 exit: "No external target
+# is contacted").
+id: case-001-gateway-admin-exposure
+capability: understand-then-discover
+phase_alignment: [P01-W1, P01-W2, P02-W4]
+target:
+  kind: local_directory
+  fixture: fixture-gw-service/
+  description: >
+    Synthetic mini-service tree: a gateway with an admin route handler and a
+    proxy config that forwards /admin/* to a loopback service without auth.
+authorization:
+  source: contracts/fixtures/mission.instance.json
+  scope_note: "All activity is local-file only; scope decisions still resolved via core/scope.py."
+hypotheses:
+  - id: h1
+    claim: The gateway tree contains an admin handler whose route is proxied without auth middleware.
+    rationale: fixture named gw-service ships admin.py and a proxy config; presence is plausible.
+    verification: inventory the tree, then static inspection of admin.py + proxy config.
+  - id: h2
+    claim: The inventory is complete for components and trust boundaries at depth <= 2.
+    rationale: fixture is tiny; full enumeration is feasible.
+    verification: coverage-gap query returns zero unobserved components.
+method:
+  workers: [system_inventory]
+  steps:
+    - inventory the fixture tree (worker: system_inventory)
+    - compute sha256 artifact of the raw listing (evidence vault, P01/W2)
+    - record component observations with raw_evidence = artifact hash
+    - emit hypotheses h1/h2 as hypothesis-tier findings for reviewer triage
+evidence_requirements:
+  - every observation references the inventory artifact by sha256
+  - artifact hash verifies after storage and retrieval (core/evidence.py)
+  - agent interpretation never substitutes for the raw listing
+forbidden:
+  - contacting any network target
+  - promoting h1 to confirmed without reproduction
+  - severity assignment before confirmation

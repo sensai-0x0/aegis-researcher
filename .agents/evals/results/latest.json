@@ -1,25 +1,25 @@
 {
-  "timestamp": "2026-11-17T11:00:15+1030",
-  "commit": "03426b8",
+  "timestamp": "2026-11-17T11:01:18+1030",
+  "commit": "4e7e7b0",
   "overall": {
-    "passed": 12,
-    "total": 29,
-    "rate": 0.414
+    "passed": 27,
+    "total": 30,
+    "rate": 0.9
   },
   "suites": {
     "safety": {
-      "passed": 2,
+      "passed": 5,
       "total": 5,
-      "rate": 0.4,
+      "rate": 1.0,
       "gate": 1.0,
-      "met": false
+      "met": true
     },
     "contracts": {
-      "passed": 0,
-      "total": 6,
-      "rate": 0.0,
+      "passed": 7,
+      "total": 7,
+      "rate": 1.0,
       "gate": 1.0,
-      "met": false
+      "met": true
     },
     "process": {
       "passed": 3,
@@ -36,11 +36,11 @@
       "met": true
     },
     "evidence": {
-      "passed": 0,
+      "passed": 3,
       "total": 3,
-      "rate": 0.0,
+      "rate": 1.0,
       "gate": 0.9,
-      "met": false
+      "met": true
     },
     "graph": {
       "passed": 0,
@@ -50,11 +50,11 @@
       "met": false
     },
     "research": {
-      "passed": 0,
+      "passed": 2,
       "total": 2,
-      "rate": 0.0,
+      "rate": 1.0,
       "gate": 0.5,
-      "met": false
+      "met": true
     }
   },
   "heuristics": [
@@ -74,7 +74,7 @@
       "id": "harness.readme-architecture",
       "capability": "harness",
       "passed": true,
-      "detail": "architecture + epistemic model documented"
+      "detail": "architecture + epistemic model documented (README+WHY)"
     },
     {
       "id": "harness.rules-nonempty",
@@ -103,38 +103,44 @@
     {
       "id": "contracts.all-parse",
       "capability": "contracts",
-      "passed": false,
-      "detail": "mission: Expecting value: line 1 column 1 (char 0); run: Expecting value: line 1 column 1 (char 0); observation: Expecting value: line 1 column 1 (char 0); finding: Expecting value: line 1 column 1 (char 0); artifact: Expecting value: line 1 column 1 (char 0)"
+      "passed": true,
+      "detail": "5/5 parse"
     },
     {
       "id": "contracts.draft-2020-12",
       "capability": "contracts",
-      "passed": false,
-      "detail": "mission not draft 2020-12; run not draft 2020-12; observation not draft 2020-12; finding not draft 2020-12; artifact not draft 2020-12"
+      "passed": true,
+      "detail": "all draft 2020-12"
     },
     {
       "id": "contracts.epistemic-ladder",
       "capability": "contracts",
-      "passed": false,
-      "detail": "missing statuses: ['observation', 'hypothesis', 'confirmed', 'rejected']"
+      "passed": true,
+      "detail": "epistemic ladder enforced"
     },
     {
       "id": "contracts.observation-evidence",
       "capability": "contracts",
-      "passed": false,
-      "detail": "observation schema missing"
+      "passed": true,
+      "detail": "evidence refs required"
     },
     {
       "id": "contracts.artifact-hash",
       "capability": "contracts",
-      "passed": false,
-      "detail": "artifact schema missing sha256"
+      "passed": true,
+      "detail": "sha256 required"
     },
     {
       "id": "contracts.no-open-objects",
       "capability": "contracts",
-      "passed": false,
-      "detail": "mission not closed; run not closed; observation not closed; finding not closed; artifact not closed"
+      "passed": true,
+      "detail": "all schemas closed"
+    },
+    {
+      "id": "contracts.fixtures-validate",
+      "capability": "contracts",
+      "passed": true,
+      "detail": "6 fixture expectations hold"
     },
     {
       "id": "safety.no-hardcoded-secrets",
@@ -151,38 +157,38 @@
     {
       "id": "safety.scope-deny-by-default",
       "capability": "safety",
-      "passed": false,
-      "detail": "core/scope.py missing"
+      "passed": true,
+      "detail": "deny-by-default + assert_authorized present"
     },
     {
       "id": "safety.policy-approval-gating",
       "capability": "safety",
-      "passed": false,
-      "detail": "core/policy.py missing"
+      "passed": true,
+      "detail": "consequential actions gated by approval"
     },
     {
       "id": "safety.audit-append-only",
       "capability": "safety",
-      "passed": false,
-      "detail": "core/audit.py missing"
+      "passed": true,
+      "detail": "hash-chained, append-only, no delete/remove/truncate"
     },
     {
       "id": "evidence.manifests-documented",
       "capability": "evidence",
-      "passed": false,
-      "detail": "manifests README missing"
+      "passed": true,
+      "detail": "custody documented"
     },
     {
       "id": "evidence.objects-immutability",
       "capability": "evidence",
-      "passed": false,
-      "detail": "objects README missing"
+      "passed": true,
+      "detail": "immutability + content addressing"
     },
     {
       "id": "evidence.observation-no-claims",
       "capability": "evidence",
-      "passed": false,
-      "detail": "observation schema missing"
+      "passed": true,
+      "detail": "facts only"
     },
     {
       "id": "graph.constraints-defined",
@@ -206,13 +212,13 @@
       "id": "process.progress-ledger-current",
       "capability": "process",
       "passed": true,
-      "detail": "iter=2, phase=PHASE-2 (contracts) \u2014 Phase 1 complete, harness gate 7/7 green"
+      "detail": "iter=5, phase=PHASE-8 next (ui/orb, reports, E2E demo) \u2014 Phases 4, 5, 7 complete; graph externally owned"
     },
     {
       "id": "process.decision-log-appended",
       "capability": "process",
       "passed": true,
-      "detail": "4 entries"
+      "detail": "15 entries"
     },
     {
       "id": "process.errors-ledger",
@@ -223,14 +229,14 @@
     {
       "id": "research.test-cases-present",
       "capability": "research",
-      "passed": false,
-      "detail": "no research test cases"
+      "passed": true,
+      "detail": "2 cases"
     },
     {
       "id": "research.expected-results",
       "capability": "research",
-      "passed": false,
-      "detail": "no expected results"
+      "passed": true,
+      "detail": "1 ground truths"
     }
   ]
 }
