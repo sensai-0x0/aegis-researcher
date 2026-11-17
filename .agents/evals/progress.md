@@ -133,6 +133,7 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | 2 | 1 | Built stdlib-only heuristic eval suite at `.agents/evals/eval-suite/` (29 heuristics, 7 suites with gates) | Python env has no third-party packages; stdlib runner guarantees the evals always run. Registry/runner drift fails by design |
 | 3 | 1 | curriculum.json is empty (0 bytes) → goal.md ↔ progress.md is the improvement comparator; divergences logged here | E-001 in errors.md; curriculum to be derived from logged decisions |
 | 4 | 1 | Branch strategy: one `feat/<phase>` branch per phase, `--no-ff` merge to main, prune after merge | Matches init.md §5 loop; keeps phase boundaries reviewable |
+| 5 | — | Added failing-first pytest suite (263 tests) + GitHub Actions CI (tests/evals/ratchet jobs) + gate ratchet on `feat/test-suite-ci`; state snapshot in `state/pytest-state-20261117T110041.md` | goal.md §Evolve: regressions caught in CI; gates tighten monotonically via `tests/thresholds.json` + `tools/ci/check_ratchet.py`; two-thread collision resolved by adopting the pydantic/PolicyEngine conftest API |
 
 ## Blocker Log (append-only)
 
