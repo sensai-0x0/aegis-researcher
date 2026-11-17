@@ -39,3 +39,6 @@ graph/export/**
 .DS_Store
 .idea/
 .vscode/
+
+# --- Session worktrees: other agent sessions check out sibling branches here; never tracked ---
+.claude/worktrees/

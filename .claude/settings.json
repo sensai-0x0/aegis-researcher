@@ -36,8 +36,5 @@
       "Read(**/*.pem)",
       "Read(**/*.key)"
     ]
-  },
-  "hooks": {
-    "notes": "Pre-tool-use hook SHOULD call core/policy.py classification before any workers/*/ execution. Consequential => ask, never auto-approve."
   }
 }

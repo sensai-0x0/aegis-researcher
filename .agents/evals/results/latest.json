@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-11-17T12:34:28+1030",
-  "commit": "91eb891",
+  "timestamp": "2026-11-17T12:54:34+1030",
+  "commit": "4debbf0",
   "overall": {
     "passed": 29,
     "total": 32,
@@ -62,7 +62,7 @@
       "id": "harness.claude-md-contract",
       "capability": "harness",
       "passed": true,
-      "detail": "3015 bytes, mission/constraints/routing present"
+      "detail": "4386 bytes, mission/constraints/routing present"
     },
     {
       "id": "harness.pyproject-valid",
@@ -212,13 +212,13 @@
       "id": "process.progress-ledger-current",
       "capability": "process",
       "passed": true,
-      "detail": "iter=6, phase=PHASE-8 COMPLETE \u2014 loop seat relocated to `aegis-loop2` after external worktree restructure"
+      "detail": "iter=6, phase=PHASE-3 RECONCILIATION \u2014 main's Phase 2/3 are complete against the dataclass API; decision row 20 commits to porting that core to the pydantic/contract API (`tests/unit/`, `tests/test_*.py`) before Phase 3 can be marked done against this branch's acceptance bar. Phase 8 (graph leg) status below is otherwise unchanged from main."
     },
     {
       "id": "process.decision-log-appended",
       "capability": "process",
       "passed": true,
-      "detail": "22 entries"
+      "detail": "24 entries"
     },
     {
       "id": "process.errors-ledger",

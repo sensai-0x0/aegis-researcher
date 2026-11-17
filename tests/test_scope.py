@@ -1,72 +1,69 @@
-import unittest
+"""TDD spec for ``core/scope.py`` — the ScopeManifest authorization boundary (red).
 
-from core.scope import Decision, ScopeError, ScopeResolver
+The conftest payload (``make_scope``) fixes the model shape; the curriculum's
+``default_execution_posture`` fixes the semantics. Structural roundtrips
+against the mission contract are covered by ``tests/unit/``; this module
+specifies the *posture* a scope manifest must enforce:
 
-MISSION = {
-    "mission_id": "11111111-1111-4111-8111-111111111111",
-    "authorized_targets": [
-        {"type": "cidr", "value": "203.0.113.0/24"},
-        {"type": "application", "value": "gw-service@203.0.113.10:8443"},
-        {"type": "component", "value": "gw-*"},
-        {"type": "host", "value": "gw.lab.local"},
-    ],
-    "exclusions": [
-        {"type": "cidr", "value": "203.0.113.0/25", "reason": "shared infrastructure"},
-    ],
-}
+1. **Network is deny-by-default**: a manifest whose ``network.default`` is
+   anything other than ``"deny"`` must not validate. Open-by-default scopes
+   are not expressible.
+2. **An unapproved manifest is not an authorization**: ``approved_by`` and
+   ``approved_at`` (a human, recorded) are mandatory.
+3. **Closed model**: no undeclared fields — nothing can smuggle authority
+   in, and no self-authorization fields exist for an agent to set.
+"""
 
+from __future__ import annotations
 
-class TestScopeDenyByDefault(unittest.TestCase):
-    def setUp(self):
-        self.r = ScopeResolver(MISSION)
+import pytest
+from pydantic import ValidationError
 
-    def test_unlisted_target_denied(self):
-        d = self.r.decide("example.com:443")
-        self.assertFalse(d.allowed)
-        self.assertIn("not listed", d.reason)
-
-    def test_exclusion_wins_over_authorization(self):
-        # 203.0.113.5 is inside the authorized /24 but inside the excluded /25.
-        d = self.r.decide("203.0.113.5")
-        self.assertFalse(d.allowed)
-        self.assertIn("shared infrastructure", d.reason)
-
-    def test_authorized_cidr(self):
-        d = self.r.decide("203.0.113.200")
-        self.assertTrue(d.allowed)
-
-    def test_exclusion_wins_even_for_named_application(self):
-        # The mission fixture authorizes gw-service@203.0.113.10:8443 but also
-        # excludes 203.0.113.0/25 ("shared infrastructure"). Exclusions are
-        # evaluated first: the named application is DENIED. Documented behavior.
-        d = self.r.decide("gw-service@203.0.113.10:8443")
-        self.assertFalse(d.allowed)
-        self.assertIn("shared infrastructure", d.reason)
-
-    def test_application_match_by_name_and_host(self):
-        # Upper half of the /24 is outside the excluded /25.
-        self.assertTrue(self.r.decide("gw-service@203.0.113.200:8443").allowed)
-        self.assertTrue(self.r.decide("gw-service@203.0.113.201:9000").allowed)  # host in /24
-
-    def test_component_wildcard(self):
-        self.assertTrue(self.r.decide("gw-worker@anywhere").allowed)
-        self.assertFalse(self.r.decide("other-worker@anywhere").allowed)
-
-    def test_empty_target_denied(self):
-        self.assertFalse(self.r.decide("").allowed)
-        self.assertFalse(self.r.decide(None).allowed)
-
-    def test_assert_authorized_raises(self):
-        with self.assertRaises(ScopeError):
-            self.r.assert_authorized("not-in-scope.host")
-
-    def test_decision_is_recordable(self):
-        d = self.r.decide("203.0.113.200")
-        self.assertIsInstance(d, Decision)
-        self.assertEqual(d.verb, "ALLOW")
-        self.assertEqual(d.mission_id, MISSION["mission_id"])
-        self.assertTrue(d.decided_at)
+pytestmark = [pytest.mark.unit, pytest.mark.safety]
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_valid_scope_manifest_validates(make_scope) -> None:
+    from core.scope import ScopeManifest
+
+    scope = ScopeManifest.model_validate(make_scope())
+    assert scope.scope_id == "scope-local-lab-0001"
+    assert scope.network["default"] == "deny"
+
+
+def test_network_open_by_default_is_not_expressible(make_scope) -> None:
+    """The posture is deny-by-default; a scope cannot opt out of it."""
+    from core.scope import ScopeManifest
+
+    payload = make_scope(network={"default": "allow", "allowed_destinations": ["*"]})
+    with pytest.raises(ValidationError):
+        ScopeManifest.model_validate(payload)
+
+
+def test_scope_must_carry_recorded_human_approval(make_scope) -> None:
+    """approved_by/approved_at are mandatory — approval cannot be implicit."""
+    from core.scope import ScopeManifest
+
+    payload = make_scope()
+    payload.pop("approved_by")
+    payload.pop("approved_at")
+    with pytest.raises(ValidationError):
+        ScopeManifest.model_validate(payload)
+
+
+def test_scope_model_is_closed(make_scope) -> None:
+    """No undeclared fields: authority cannot be smuggled into the manifest."""
+    from core.scope import ScopeManifest
+
+    with pytest.raises(ValidationError):
+        ScopeManifest.model_validate(make_scope(operator_feeling="lucky"))
+
+
+def test_scope_manifest_has_no_self_authorization_fields(make_scope) -> None:
+    """A human approves the manifest; nothing on it carries a policy decision."""
+    from core.scope import ScopeManifest
+
+    forbidden = {"decision", "policy_decision", "policy_outcome", "allow", "granted", "authorized"}
+    field_names = set(ScopeManifest.model_fields)
+    assert not (field_names & forbidden), (
+        f"ScopeManifest declares authority fields: {sorted(field_names & forbidden)}"
+    )
