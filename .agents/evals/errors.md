@@ -133,4 +133,28 @@
 - Prevention: renderer tokens are unambiguous; regression is impossible without
   reverting the pattern. Status: CLOSED
 
+### E-009 — MCP audit_verify crashed the server on an already-corrupted chain
+- Date / Iteration: 2026-11-17 / 7
+- Capability: harness
+- Symptom: `aegis.audit_verify` raised `AuditCorruptionError` unhandled when asked to
+  verify a tampered audit log, killing the JSON-RPC server process instead of
+  returning `{"ok": false, "first_bad_seq": N}` as the tool's contract implies.
+- Root cause: `core/audit.AuditLog.__init__` verifies the chain eagerly on load and
+  raises on corruption by design (fail-closed; `tests/test_policy_audit.py::
+  test_tamper_detection`). `adapters/mcp/server.py`'s `tool_call` only caught
+  `(KeyError, ValidationError, FileNotFoundError, ValueError)` around the
+  `AuditLog(args["path"])` construction — `AuditCorruptionError` isn't a subclass of
+  any of those, so it propagated out of `handle()` with nothing catching it. Never
+  surfaced before because no prior test or smoke exercised `audit_verify` against a
+  file that was corrupted *before* the tool was called.
+- Patch: `tool_call`'s `aegis.audit_verify` branch now catches `AuditCorruptionError`
+  explicitly, extracts the bad sequence number from the exception message, and
+  returns `{"ok": false, "first_bad_seq": N, "entries": None}` — reporting the
+  corruption instead of dying on it. The server now answers subsequent calls.
+- Prevention: `evals/mcp_adapter_smoke.py` (case-002) builds a healthy chain, tampers
+  it the same way the core unit test does, re-verifies through the MCP tool, and
+  asserts both the `ok=false` result AND that the server survives to answer a
+  further `tools/list` call. Registered as `research.mcp-adapter-parity`.
+- Status: CLOSED
+
 <!-- Append new entries below. Never rewrite or delete existing entries. -->
