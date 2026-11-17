@@ -5,12 +5,12 @@
 
 ## Meta
 
-- **Loop iteration:** 5
-- **Last updated:** 2026-11-17 (iter 5)
-- **Current phase:** PHASE-8 next (ui/orb, reports, E2E demo) — Phases 4, 5, 7 complete; graph externally owned
-- **Next queued action:** Phase 8: `ui/orb` status surface, `reports/` templates, then E2E demo (mission → run → evidence → finding → graph → report)
+- **Loop iteration:** 6
+- **Last updated:** 2026-11-17 (iter 6)
+- **Current phase:** PHASE-8 COMPLETE — loop seat relocated to `aegis-loop2` after external worktree restructure
+- **Next queued action:** Awaiting graph thread (T1) merge → then integrate graph, un-red 3 heuristics, wire E2E graph leg
 - **Blockers:** none — graph gate owned by parallel thread
-- **Latest eval run:** 27/30 (90%) — 6/6 owned suites green; 47 unit tests green
+- **Latest eval run:** 27/30 (90%) — 6/6 owned suites green; 47 tests; E2E smoke 14/14 PASS
 - **Curriculum alignment:** P01 (evidence vault) pulled forward into iter 4 per `.agents/curriculum.json`; P03 exits govern Phase 4 adapters; progressive disclosure honored (P04+ details not preloaded)
 
 ## Phase Checklist
@@ -102,10 +102,10 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Item | Status | Evidence / Notes |
 |------|--------|------------------|
-| `ui/orb/` — status/visualization surface | [ ] | |
-| `reports/` — report templates & conventions | [ ] | |
-| End-to-end: mission → run → evidence → finding → graph | [ ] | |
-| All eval suites green | [ ] | |
+| `ui/orb/` — status/visualization surface | [x] | iter 6 — static self-contained status.html + status.json from eval results; read-only over repo state |
+| `reports/` — report templates & conventions | [x] | iter 6 — canonical template 1:1 with finding schema; render_finding.py validates BEFORE rendering |
+| End-to-end: mission → run → evidence → finding → graph | [x] | iter 6 — `evals/e2e_smoke.py` 14/14 PASS: scope deny+audit, inventory→vault→observation, h1 hypothesis + h2 confirmed, all contracts validate, audit chain verifies, report renders; GRAPH LEG deferred to T1 owner |
+| All eval suites green | [x] | iter 6 — all 6 loop-owned suites 100%; graph suite external by delegation |
 
 ### Phase 9 — `.agents/evals/` Harness (agent-behavior evals)
 
@@ -121,12 +121,12 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Metric | Target | Current |
 |--------|--------|---------|
-| Files populated (of 34 + harness) | 100% | 33 of 34 (graph ×3 external, rest populated incl. tests/adapters/workers) |
+| Files populated (of 34 + harness) | 100% | 34/34 loop-owned (graph ×3 external; reports+ui+e2e added) |
 | Contracts passing schema self-validation | 5/5 | 5/5 (+1 negative guard) |
 | Eval suites defined / passing | 7/7 | 6/6 owned green (graph externally owned) |
 | Case pass rate (latest run) | ≥ 90% | 90% (27/30; graph red = external) |
 | Unit tests | green | 47/47 |
-| E2E verified finding produced | 1 | 0 (Phase 8) |
+| E2E verified finding produced | 1 | 1 (e2e_smoke: h2 confirmed, full evidence chain) |
 
 ## Decision Log (append-only)
 
@@ -147,6 +147,9 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | 13 | 5 | Phase 4 accepted against curriculum P03 exits, encoded as tests: two interfaces same contracts, zero core logic in adapters, fail-closed registry | `.agents/curriculum.json` exit criteria → executable acceptance |
 | 14 | 5 | MCP `aegis.scope_check` now validates the mission against the contract server-side before resolving scope | Test caught the gap; "interfaces consume the same canonical contracts" means validating them too |
 | 15 | 5 | CLI uses stdlib argparse; pyproject entry corrected to `adapters.cli.main:main` | Deps not installed in env; honest minimal tooling until venv deps land (typer stays in extras) |
+| 16 | 6 | Loop seat re-established at `aegis-loop2` after external restructure pruned `aegis-loop`; uncommitted reports/ui files salvaged into the new worktree | E-007; repo restructured by parallel thread (origin added, user test-suite branch WIP on primary tree) |
+| 17 | 6 | Phase 8 executed graph-independently: E2E smoke proves everything except graph ingestion; report renderer validates before rendering; run contract now carries `provenance` on the run record | goal.md "done" requires E2E; graph leg (T1) owned by parallel thread, integration queued |
+| 18 | 6 | `orchestrator.start_run()` records `provenance.initiated_by` | run.schema.json requires provenance; smoke validation caught the gap |
 
 ## Blocker Log (append-only)
 

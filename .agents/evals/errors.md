@@ -106,4 +106,31 @@
   `tests/test_adapters.py`.
 - Status: CLOSED
 
+### E-007 — external worktree restructure pruned the loop seat mid-iteration; two smoke slips followed
+- Date / Iteration: 2026-11-17 / 6
+- Capability: process (environment) + contracts (build quality)
+- Symptom: loop's worktree (`aegis-loop`) was removed from the repo's worktree
+  registry by a parallel restructure (origin remote added; primary tree moved to
+  user's test-suite branch); mid-iteration edits (reports/, ui/orb/) survived only
+  as stray untracked files. Two smoke bugs then surfaced: run record validated
+  pre-conclude (no audit_ref yet) and hypothesis mapped to a nonexistent schema.
+- Root cause: no re-verification of the loop seat before each write; smoke
+  validation ordering didn't match the run lifecycle.
+- Patch: new seat `aegis-loop2` (branch loop/phase-8) created from main; stray
+  files salvaged; run validation moved post-conclude; hypothesis→finding schema
+  mapping fixed. Orchestrator now records run provenance (caught by contract check).
+- Prevention: seat check (pwd + `git worktree list`) added implicitly to ORIENT
+  step; E2E smoke replays these checks permanently in `evals/e2e_smoke.py`.
+- Status: CLOSED
+
+### E-008 — status orb crashed on CSS braces via str.format
+- Date / Iteration: 2026-11-17 / 6
+- Capability: harness
+- Symptom: `generate_status.py` KeyError 'font-family' — CSS braces interpreted
+  as format fields.
+- Root cause: str.format over a template containing literal braces.
+- Patch: template switched to explicit @@TOKEN@@ replacement.
+- Prevention: renderer tokens are unambiguous; regression is impossible without
+  reverting the pattern. Status: CLOSED
+
 <!-- Append new entries below. Never rewrite or delete existing entries. -->

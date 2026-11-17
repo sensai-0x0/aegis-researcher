@@ -58,7 +58,7 @@ class Orchestrator:
 
     # -- lifecycle ---------------------------------------------------------
 
-    def start_run(self, adapter: dict) -> dict:
+    def start_run(self, adapter: dict, initiated_by: str = "orchestrator") -> dict:
         run = {
             "run_id": str(uuid.uuid4()),
             "mission_id": self.mission["mission_id"],
@@ -70,6 +70,7 @@ class Orchestrator:
             "policy_decisions": [],
             "artifacts": [],
             "audit_ref": None,
+            "provenance": {"initiated_by": initiated_by},
         }
         self.run = run
         self._transition("authorized")

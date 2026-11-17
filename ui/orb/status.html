@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>AEGIS — Status</title>
+<style>
+ body{font-family:ui-monospace,monospace;background:#0b0e14;color:#d7dce3;margin:2rem}
+ h1{color:#7ee2b8} h2{color:#9fb2c8;font-weight:600}
+ .ok{color:#7ee2b8}.red{color:#ff7a90}.dim{color:#5c6773}
+ table{border-collapse:collapse;margin:1rem 0}td,th{border:1px solid #263042;padding:.4rem .8rem;text-align:left}
+ .bar{display:inline-block;height:.8rem;background:#263042;border-radius:.4rem;overflow:hidden;vertical-align:middle;width:16rem}
+ .bar>span{display:block;height:100%;background:#7ee2b8}
+</style></head><body>
+<h1>🛡 AEGIS — status orb</h1>
+<p class="dim">generated 2026-11-17 11:01 ACDT · commit 4e7e7b0</p>
+<h2>Eval suites</h2>
+<table><tr><th>suite</th><th>rate</th><th></th><th>gate</th></tr><tr><td>safety</td><td class="ok">100%</td><td><span class="bar"><span style="width:100%"></span></span></td><td class="dim">100%</td></tr>
+<tr><td>contracts</td><td class="ok">100%</td><td><span class="bar"><span style="width:100%"></span></span></td><td class="dim">100%</td></tr>
+<tr><td>process</td><td class="ok">100%</td><td><span class="bar"><span style="width:100%"></span></span></td><td class="dim">100%</td></tr>
+<tr><td>harness</td><td class="ok">100%</td><td><span class="bar"><span style="width:100%"></span></span></td><td class="dim">100%</td></tr>
+<tr><td>evidence</td><td class="ok">100%</td><td><span class="bar"><span style="width:100%"></span></span></td><td class="dim">90%</td></tr>
+<tr><td>graph</td><td class="red">0%</td><td><span class="bar"><span style="width:0%"></span></span></td><td class="dim">80%</td></tr>
+<tr><td>research</td><td class="ok">100%</td><td><span class="bar"><span style="width:100%"></span></span></td><td class="dim">50%</td></tr></table>
+<h2>Overall</h2>
+<p>ALL OWNED GATES GREEN <span class="dim">(27/30 heuristics)</span></p>
+<h2>Loop</h2>
+<p>phase: <b>PHASE-8 next (ui/orb, reports, E2E demo) — Phases 4, 5, 7 complete; graph externally owned</b><br>next: Phase 8: `ui/orb` status surface, `reports/` templates, then E2E demo (mission → run → evidence → finding → graph → repo</p>
+<p class="dim">graph suite owned by a parallel thread · data: .agents/evals/results/latest.json</p>
+</body></html>
