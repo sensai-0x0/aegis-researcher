@@ -37,3 +37,11 @@ the behavioral mirror of `core/scope.py` (deny-by-default) and `core/policy.py`
   ask a human, never assume.
 - "This deletion is reversible, I'll proceed" — consequential means consequential
   regardless of perceived reversibility.
+
+## Open implementation gap
+
+`core/policy.py` is currently an empty file. Rule 5 above (classification + approval
+token before execution) is not yet enforced by any hook — there is no `PreToolUse`
+hook wired to it. Until `core/policy.py` is implemented, this MUST is aspirational for
+automated enforcement and classification has to be done manually/by review. Add a
+`PreToolUse` hook in `.claude/settings.json` once the module exists.
