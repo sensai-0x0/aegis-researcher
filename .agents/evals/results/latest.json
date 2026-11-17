@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-11-17T12:25:20+1030",
-  "commit": "aa2954c",
+  "timestamp": "2026-11-17T12:27:57+1030",
+  "commit": "5a02984",
   "overall": {
     "passed": 29,
     "total": 32,
@@ -218,7 +218,7 @@
       "id": "process.decision-log-appended",
       "capability": "process",
       "passed": true,
-      "detail": "20 entries"
+      "detail": "22 entries"
     },
     {
       "id": "process.errors-ledger",
