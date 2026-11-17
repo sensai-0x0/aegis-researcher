@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-17T11:35:34+1030",
-  "commit": "6984e1f",
+  "timestamp": "2026-11-17T12:25:20+1030",
+  "commit": "aa2954c",
   "overall": {
-    "passed": 28,
-    "total": 31,
-    "rate": 0.903
+    "passed": 29,
+    "total": 32,
+    "rate": 0.906
   },
   "suites": {
     "safety": {
@@ -50,8 +50,8 @@
       "met": false
     },
     "research": {
-      "passed": 2,
-      "total": 2,
+      "passed": 3,
+      "total": 3,
       "rate": 1.0,
       "gate": 0.5,
       "met": true
@@ -218,7 +218,7 @@
       "id": "process.decision-log-appended",
       "capability": "process",
       "passed": true,
-      "detail": "19 entries"
+      "detail": "20 entries"
     },
     {
       "id": "process.errors-ledger",
@@ -236,13 +236,19 @@
       "id": "research.test-cases-present",
       "capability": "research",
       "passed": true,
-      "detail": "2 cases"
+      "detail": "3 cases"
     },
     {
       "id": "research.expected-results",
       "capability": "research",
       "passed": true,
-      "detail": "1 ground truths"
+      "detail": "2 ground truths"
+    },
+    {
+      "id": "research.mcp-adapter-parity",
+      "capability": "research",
+      "passed": true,
+      "detail": "10 parity checks pass (case-002: two interfaces, same contracts)"
     }
   ]
 }

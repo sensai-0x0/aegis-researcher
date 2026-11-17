@@ -1,0 +1,39 @@
+# Ground truth for case-002-mcp-adapter-parity
+#
+# The bar: every decision the MCP adapter returns must be IDENTICAL to the
+# decision core/scope.py returns directly for the same input. Any
+# divergence — even a differently-worded reason string for the same
+# allowed/denied outcome — is a parity failure, because it means the adapter
+# is interpreting the contract rather than purely marshaling it.
+case: case-002-mcp-adapter-parity
+expected:
+  scope_parity:
+    - target: "203.0.113.200"
+      allowed: true
+      reason: "authorized by cidr:203.0.113.0/24"
+    - target: "203.0.113.50"
+      allowed: false
+      reason: "excluded: shared infrastructure segment, human approval required first"
+    - target: "unauthorized.example.com"
+      allowed: false
+      reason: "not listed in mission authorized_targets"
+  contract_enforcement:
+    malformed_mission_rejected_before_scope_resolution: true
+  audit_verify_through_adapter:
+    healthy_chain: { ok: true, entries: 2 }
+    tampered_chain: { ok: false, first_bad_seq: 1, server_survives: true }
+  epistemic_outcomes:
+    - id: h3
+      final_status: confirmed    # parity reproduced live, 3/3 target classes
+      must_have: [reproduction]
+    - id: h4
+      final_status: confirmed    # fixed: adapter now reports corruption instead of crashing
+      must_have: [reproduction, root_cause, mitigation]
+grading:
+  exact:
+    - scope_check via MCP matches core/scope.py for every listed target (allowed AND reason)
+    - audit_verify via MCP reports ok=false (not a crash/timeout) on a tampered chain
+  schema:
+    - this case produces no finding/observation/artifact records (harness-interface case, not a research-target case)
+  rubric:
+    - any reason-string mismatch between direct and MCP-routed decisions counts as a parity failure, not a pass

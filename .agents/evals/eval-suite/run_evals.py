@@ -427,6 +427,20 @@ def h_expected_results() -> tuple[bool, str]:
     return bool(files), f"{len(files)} ground truths" if files else "no expected results"
 
 
+def h_mcp_adapter_parity() -> tuple[bool, str]:
+    script = ROOT / "evals" / "mcp_adapter_smoke.py"
+    if not script.is_file():
+        return False, "evals/mcp_adapter_smoke.py missing"
+    proc = subprocess.run(
+        [sys.executable, "-u", str(script)], capture_output=True, text=True,
+        cwd=ROOT, timeout=30,
+    )
+    if proc.returncode != 0:
+        return False, proc.stdout.strip()[-300:] or proc.stderr.strip()[-300:]
+    n = proc.stdout.count("[PASS]")
+    return True, f"{n} parity checks pass (case-002: two interfaces, same contracts)"
+
+
 CHECKS = {
     "harness.claude-md-contract": h_claude_md,
     "harness.pyproject-valid": h_pyproject,
@@ -459,6 +473,7 @@ CHECKS = {
     "process.benchmarks-wired": h_benchmarks_wired,
     "research.test-cases-present": h_test_cases,
     "research.expected-results": h_expected_results,
+    "research.mcp-adapter-parity": h_mcp_adapter_parity,
 }
 
 

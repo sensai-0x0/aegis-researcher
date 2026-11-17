@@ -1,0 +1,70 @@
+# AEGIS Research Test Case: MCP-adapter interface parity (synthetic, no network)
+#
+# Aligned to curriculum P03 (agent harness engineering) exit criterion: "Two
+# interfaces consume the same canonical contracts." case-001 proves the
+# understand-then-discover flow through direct core/ calls (the harness's
+# "zeroth" interface, exercised by evals/e2e_smoke.py). This case proves the
+# SAME mission + SAME targets produce the SAME scope decisions through a
+# genuinely separate interface: adapters/mcp (JSON-RPC 2.0 over stdio).
+id: case-002-mcp-adapter-parity
+capability: harness-interface-parity
+phase_alignment: [P02-W5, P03]
+target:
+  kind: local_process
+  fixture: contracts/fixtures/mission.instance.json
+  description: >
+    No external system is contacted. The "target" under test is the harness
+    itself: whether adapters/mcp/server.py reproduces core/scope.py decisions
+    exactly, with zero scope/policy logic duplicated in the adapter.
+authorization:
+  source: contracts/fixtures/mission.instance.json
+  scope_note: "Process-local JSON-RPC over stdio; no network, no live target contact."
+hypotheses:
+  - id: h3
+    claim: >
+      adapters/mcp's aegis.scope_check tool returns the same allowed/reason
+      pair as core/scope.py's ScopeResolver.decide() for every target class
+      the mission defines (authorized CIDR member, excluded carve-out within
+      that CIDR, and an unlisted target).
+    rationale: >
+      Phase 4 (decision log #14) added server-side contract validation ahead
+      of scope resolution; parity across all three decision classes was
+      never exercised end-to-end through the adapter itself, only via unit
+      tests of core/scope.py in isolation.
+    verification: >
+      Run evals/mcp_adapter_smoke.py; it resolves the same mission+target
+      pairs directly via core/scope.py and via a live adapters.mcp.server
+      subprocess over JSON-RPC, and asserts allowed+reason match exactly.
+  - id: h4
+    claim: >
+      adapters/mcp's aegis.audit_verify tool reports a tampered audit chain
+      as a verify failure (ok=false, first_bad_seq set), rather than
+      crashing the server process.
+    rationale: >
+      core/audit.py's AuditLog deliberately raises AuditCorruptionError on
+      load when the on-disk chain is corrupted (fail-closed; see
+      tests/test_policy_audit.py::test_tamper_detection). Before this case,
+      no code path exercised what the MCP server does when a caller asks it
+      to verify a chain that is already corrupted — the raise propagated
+      unhandled and would have killed the server mid-session.
+    verification: >
+      evals/mcp_adapter_smoke.py builds a healthy 2-entry chain, confirms a
+      clean verify, tampers one entry's payload on disk (same technique as
+      the core unit test), re-verifies through the MCP tool, and confirms
+      the server answers a subsequent tools/list call (i.e. it is still
+      alive).
+method:
+  workers: []   # no research worker runs; this exercises the harness itself
+  steps:
+    - spawn adapters/mcp/server.py as a JSON-RPC 2.0 stdio subprocess
+    - call aegis.mission_validate with the fixture mission
+    - call aegis.scope_check for an authorized, an excluded, and an unlisted target
+    - call aegis.scope_check with a structurally invalid mission (must fail closed)
+    - build a 2-entry audit chain, verify it clean via aegis.audit_verify
+    - tamper the chain on disk, verify again, confirm ok=false not a crash
+evidence_requirements:
+  - every scope decision compared is reproduced byte-for-reason against core/scope.py directly
+  - the adapter process must still answer tools/list after reporting a corrupted chain
+forbidden:
+  - contacting any network target
+  - duplicating scope/policy decision logic inside the adapter (adapter must only marshal + validate)

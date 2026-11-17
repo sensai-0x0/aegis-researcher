@@ -11,6 +11,7 @@ Test: echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | python3 -m adapter
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -18,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from core.audit import AuditLog  # noqa: E402
+from core.audit import AuditCorruptionError, AuditLog  # noqa: E402
 from core.jsonschema_lite import ValidationError, validate  # noqa: E402
 from core.mission import load_schema  # noqa: E402
 from core.scope import ScopeResolver  # noqa: E402
@@ -77,7 +78,16 @@ def tool_call(name: str, args: dict) -> dict:
         return {"allowed": decision.allowed, "reason": decision.reason,
                 "decided_at": decision.decided_at, "enforced_by": "core/scope.py"}
     if name == "aegis.audit_verify":
-        audit = AuditLog(args["path"])
+        # core/audit.py verifies eagerly on load and raises on a corrupted
+        # chain (fail-closed by design — see tests/test_policy_audit.py
+        # test_tamper_detection). audit_verify's job is to REPORT that
+        # corruption, not to crash the server on it, so it is caught here.
+        try:
+            audit = AuditLog(args["path"])
+        except AuditCorruptionError as e:
+            m = re.search(r"at seq (\d+)", str(e))
+            return {"ok": False, "first_bad_seq": int(m.group(1)) if m else None,
+                    "entries": None}
         ok, bad = audit.verify()
         return {"ok": ok, "first_bad_seq": bad, "entries": len(audit.entries())}
     raise KeyError(f"unknown tool {name!r}: failing closed")

@@ -94,9 +94,10 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 
 | Item | Status | Evidence / Notes |
 |------|--------|------------------|
-| `evals/test_cases/` — research test corpus | [x] | iter 5 — case-001 (curriculum P01/P02-aligned) + synthetic gw-service fixture |
-| `evals/expected_results/` — ground truth per case | [x] | iter 5 — case-001-expected: h1 stays hypothesis (no reproduction), h2 confirmed |
-| `evals/harness_benchmarks/` — harness perf/quality benchmarks | [x] | iter 5 — 5 benchmarks incl. triage inflation guard + deny-by-default behavior |
+| `evals/test_cases/` — research test corpus | [x] | iter 5 — case-001 (curriculum P01/P02-aligned) + synthetic gw-service fixture; iter 7 — case-002 (P03 harness-interface-parity, no network) |
+| `evals/expected_results/` — ground truth per case | [x] | iter 5 — case-001-expected: h1 stays hypothesis (no reproduction), h2 confirmed; iter 7 — case-002-expected: h3/h4 confirmed live |
+| `evals/harness_benchmarks/` — harness perf/quality benchmarks | [x] | iter 5 — 5 benchmarks defined incl. triage inflation guard + deny-by-default behavior; iter 7 — 3 of 5 wired to real runner output (`run_benchmarks.py`) |
+| `evals/mcp_adapter_smoke.py` — second interface proven live | [x] | iter 7 — 10/10 PASS: adapters/mcp scope_check reproduces core/scope.py decisions exactly across 3 target classes; audit_verify fix (see below) |
 
 ### Phase 8 — UI, Reports & E2E Validation
 
@@ -124,7 +125,7 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | Files populated (of 34 + harness) | 100% | 34/34 loop-owned (graph ×3 external; reports+ui+e2e added) |
 | Contracts passing schema self-validation | 5/5 | 5/5 (+1 negative guard) |
 | Eval suites defined / passing | 7/7 | 6/6 owned green (graph externally owned) |
-| Case pass rate (latest run) | ≥ 90% | 90% (28/31; graph red = external) |
+| Case pass rate (latest run) | ≥ 90% | 91% (29/32; graph red = external) |
 | Unit tests | green | 47/47 |
 | E2E verified finding produced | 1 | 1 (e2e_smoke: h2 confirmed, full evidence chain) |
 
@@ -170,6 +171,7 @@ corrected transition is superseded by a new record, never edited in place.
 | 18 | 6 | `orchestrator.start_run()` records `provenance.initiated_by` | run.schema.json requires provenance; smoke validation caught the gap |
 | 19 | 7 | Recorded P01–P03 → P04 phase transition in the ledger per `transition_record` contract; human approval marked pending rather than assumed | `scope.md` MUST-NOT-5 — agent must not self-authorize; curriculum's progressive-disclosure gate requires a recorded approval, not an inferred one |
 | 20 | 7 | Wired `bench-evidence-chain-completeness` + `bench-deny-by-default-behavior` + `bench-time-to-first-verified-finding` to real `evals/e2e_smoke.py` output via new `evals/harness_benchmarks/run_benchmarks.py`; left `bench-triage-accuracy`/`bench-provenance-recall` explicitly `not_wired` rather than faked | goal.md P2 backlog item; research.md MUST-NOT-4 (never report activity metrics as results) extends to never reporting an absent measurement as a result |
+| 21 | 7 | Added case-002 (`evals/mcp_adapter_smoke.py`): proved live, not just unit-tested, that `adapters/mcp` reproduces `core/scope.py` scope decisions exactly for all 3 target classes. Discovered + fixed a real bug in the process: `aegis.audit_verify` crashed the MCP server on a corrupted chain instead of reporting `ok=false`, because `core/audit.AuditLog` raises `AuditCorruptionError` eagerly on load (intentional, tested fail-closed behavior) and the server didn't catch it | P03 exit "two interfaces consume the same canonical contracts" — never actually exercised live through the adapter before this; the crash was a genuine harness defect, not a hypothetical |
 
 ## Blocker Log (append-only)
 

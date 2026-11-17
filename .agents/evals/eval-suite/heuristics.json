@@ -41,6 +41,7 @@
     { "id": "process.errors-ledger",           "capability": "process",   "description": ".agents/evals/errors.md exists with the patch-entry format." },
     { "id": "process.benchmarks-wired",        "capability": "process",   "description": "evals/harness_benchmarks/run_benchmarks.py exists and has recorded at least one real (non-placeholder) benchmark measurement." },
     { "id": "research.test-cases-present",     "capability": "research",  "description": "evals/test_cases/ contains at least one synthetic research case." },
-    { "id": "research.expected-results",       "capability": "research",  "description": "evals/expected_results/ contains ground truth for at least one case." }
+    { "id": "research.expected-results",       "capability": "research",  "description": "evals/expected_results/ contains ground truth for at least one case." },
+    { "id": "research.mcp-adapter-parity",     "capability": "research",  "description": "evals/mcp_adapter_smoke.py passes: adapters/mcp reproduces core/scope.py decisions exactly (P03 'two interfaces, same contracts')." }
   ]
 }
