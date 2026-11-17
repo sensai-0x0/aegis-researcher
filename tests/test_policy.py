@@ -177,7 +177,9 @@ def test_every_decision_is_appended_to_the_audit_chain(engine_factory, request_f
 def test_engine_cannot_be_widened_at_runtime(engine_factory) -> None:
     """Agents must not be able to grant themselves missions, scopes or operations."""
     engine, _ = engine_factory()
-    mutators = {"add_mission", "add_scope", "grant", "widen", "allow", "allow_operation", "set_policy"}
+    mutators = {
+        "add_mission", "add_scope", "grant", "widen", "allow", "allow_operation", "set_policy",
+    }
     exposed = {name for name in dir(engine) if not name.startswith("_")}
     assert not (exposed & mutators), (
         f"PolicyEngine exposes scope-widening API: {sorted(exposed & mutators)}"
