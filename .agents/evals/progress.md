@@ -128,6 +128,24 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | Unit tests | green | 47/47 |
 | E2E verified finding produced | 1 | 1 (e2e_smoke: h2 confirmed, full evidence chain) |
 
+## Phase Transition Records (append-only)
+
+Per `curriculum.json` → `header_agent_instructions.progressive_disclosure.transition_record`
+and `curriculum_control.phase_transition_requires`. Each record is immutable; a
+corrected transition is superseded by a new record, never edited in place.
+
+### P01–P03 → P04 (harness build → research-capability activation)
+
+| Field | Value |
+|-------|-------|
+| Transition | P01 Laboratory foundations, P02 Systems & architecture, P03 Agent harness engineering → P04 (first Discover-capability phase) |
+| Date / Iteration | 2026-11-17 / iter 7 |
+| Completed gate (objective, evidence-backed) | P01: `core/scope.py` deny-by-default + exclusions-first (scope suite 5/5), `core/evidence.py` content-addressed vault with hash verify on store+retrieval (evidence suite 3/3), emergency-stop = policy-gated consequential actions (`core/policy.py`, safety suite 5/5). P02: adapters (`claude_code`, `codex`, `mcp`, `cli`) consume the same 5 canonical contracts with zero core logic duplicated (harness suite 7/7); `orchestrator.py` blocks out-of-scope dispatch and evidence-free observations, attributable to mission+run (`provenance.initiated_by`, caught + fixed in iter 6). P03: CLI (`adapters/cli`) validates mission input, emits schema-valid output, fails safely on malformed input (contracts suite 7/7); `workers/system_inventory` repeatable read-only collection with source/collection metadata on every observation (research suite 2/2, process suite 3/3). |
+| Supporting runs | 47/47 unit tests · eval-suite 27/30 (6/6 loop-owned suites 100%, graph suite external/T1) · `evals/e2e_smoke.py` 14/14 (one evidence-backed `confirmed` finding, full custody chain, audit verifies) |
+| Independent reviewer outcome | Self-reviewed against `curriculum.json` phase `acceptance_criteria` arrays for P01/P02/P03 (cross-checked field-by-field above) by the loop agent acting in the `reviewer` capacity: PASS on every listed criterion for the harness-build scope. No `reviewer` sub-agent was separately dispatched this iteration — recorded here as a limitation, not elided. |
+| Unresolved issues | (1) Graph leg of E2E remains delegated to the T1 parallel thread — P04+ work that depends on graph-backed queries is blocked until T1 lands. (2) User's `feat/curriculum-test-suite-p01-p03` branch is still WIP on the primary tree — not yet folded. (3) `workers/` P04–P08 remain interface-complete stubs; no real Discover-capability execution has occurred. |
+| Human / curriculum-controller approval | **Pending.** Per `scope.md` MUST-NOT-5 and goal.md's anti-inflation stance, this agent does not self-authorize unlocking P04 execution authority (synthetic lab provisioning, live worker activation). This record documents that the P01–P03 *harness-build* gate is objectively met; a human must still approve provisioning an authorized synthetic lab before any P04 worker (`static_analysis`, `application_testing`, …) executes against a target. Content disclosure of P04's one-sentence phase outcome is permitted now (`future_preview`); detailed P04 briefs stay locked until that approval is recorded. |
+
 ## Decision Log (append-only)
 
 | Date | Iteration | Decision | Rationale |
@@ -150,6 +168,7 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | 16 | 6 | Loop seat re-established at `aegis-loop2` after external restructure pruned `aegis-loop`; uncommitted reports/ui files salvaged into the new worktree | E-007; repo restructured by parallel thread (origin added, user test-suite branch WIP on primary tree) |
 | 17 | 6 | Phase 8 executed graph-independently: E2E smoke proves everything except graph ingestion; report renderer validates before rendering; run contract now carries `provenance` on the run record | goal.md "done" requires E2E; graph leg (T1) owned by parallel thread, integration queued |
 | 18 | 6 | `orchestrator.start_run()` records `provenance.initiated_by` | run.schema.json requires provenance; smoke validation caught the gap |
+| 19 | 7 | Recorded P01–P03 → P04 phase transition in the ledger per `transition_record` contract; human approval marked pending rather than assumed | `scope.md` MUST-NOT-5 — agent must not self-authorize; curriculum's progressive-disclosure gate requires a recorded approval, not an inferred one |
 
 ## Blocker Log (append-only)
 
