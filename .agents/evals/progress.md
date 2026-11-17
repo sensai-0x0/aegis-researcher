@@ -124,7 +124,7 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | Files populated (of 34 + harness) | 100% | 34/34 loop-owned (graph ×3 external; reports+ui+e2e added) |
 | Contracts passing schema self-validation | 5/5 | 5/5 (+1 negative guard) |
 | Eval suites defined / passing | 7/7 | 6/6 owned green (graph externally owned) |
-| Case pass rate (latest run) | ≥ 90% | 90% (27/30; graph red = external) |
+| Case pass rate (latest run) | ≥ 90% | 90% (28/31; graph red = external) |
 | Unit tests | green | 47/47 |
 | E2E verified finding produced | 1 | 1 (e2e_smoke: h2 confirmed, full evidence chain) |
 
@@ -169,6 +169,7 @@ corrected transition is superseded by a new record, never edited in place.
 | 17 | 6 | Phase 8 executed graph-independently: E2E smoke proves everything except graph ingestion; report renderer validates before rendering; run contract now carries `provenance` on the run record | goal.md "done" requires E2E; graph leg (T1) owned by parallel thread, integration queued |
 | 18 | 6 | `orchestrator.start_run()` records `provenance.initiated_by` | run.schema.json requires provenance; smoke validation caught the gap |
 | 19 | 7 | Recorded P01–P03 → P04 phase transition in the ledger per `transition_record` contract; human approval marked pending rather than assumed | `scope.md` MUST-NOT-5 — agent must not self-authorize; curriculum's progressive-disclosure gate requires a recorded approval, not an inferred one |
+| 20 | 7 | Wired `bench-evidence-chain-completeness` + `bench-deny-by-default-behavior` + `bench-time-to-first-verified-finding` to real `evals/e2e_smoke.py` output via new `evals/harness_benchmarks/run_benchmarks.py`; left `bench-triage-accuracy`/`bench-provenance-recall` explicitly `not_wired` rather than faked | goal.md P2 backlog item; research.md MUST-NOT-4 (never report activity metrics as results) extends to never reporting an absent measurement as a result |
 
 ## Blocker Log (append-only)
 

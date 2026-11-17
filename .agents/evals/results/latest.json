@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-11-17T11:01:18+1030",
-  "commit": "4e7e7b0",
+  "timestamp": "2026-11-17T11:35:34+1030",
+  "commit": "6984e1f",
   "overall": {
-    "passed": 27,
-    "total": 30,
-    "rate": 0.9
+    "passed": 28,
+    "total": 31,
+    "rate": 0.903
   },
   "suites": {
     "safety": {
@@ -22,8 +22,8 @@
       "met": true
     },
     "process": {
-      "passed": 3,
-      "total": 3,
+      "passed": 4,
+      "total": 4,
       "rate": 1.0,
       "gate": 1.0,
       "met": true
@@ -212,19 +212,25 @@
       "id": "process.progress-ledger-current",
       "capability": "process",
       "passed": true,
-      "detail": "iter=5, phase=PHASE-8 next (ui/orb, reports, E2E demo) \u2014 Phases 4, 5, 7 complete; graph externally owned"
+      "detail": "iter=6, phase=PHASE-8 COMPLETE \u2014 loop seat relocated to `aegis-loop2` after external worktree restructure"
     },
     {
       "id": "process.decision-log-appended",
       "capability": "process",
       "passed": true,
-      "detail": "15 entries"
+      "detail": "19 entries"
     },
     {
       "id": "process.errors-ledger",
       "capability": "process",
       "passed": true,
       "detail": "entry format defined"
+    },
+    {
+      "id": "process.benchmarks-wired",
+      "capability": "process",
+      "passed": true,
+      "detail": "3 benchmark(s) wired to real runner output"
     },
     {
       "id": "research.test-cases-present",

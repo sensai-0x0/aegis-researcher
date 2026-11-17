@@ -403,6 +403,18 @@ def h_errors_ledger() -> tuple[bool, str]:
     return True, "entry format defined"
 
 
+def h_benchmarks_wired() -> tuple[bool, str]:
+    runner = ROOT / "evals" / "harness_benchmarks" / "run_benchmarks.py"
+    history = ROOT / "evals" / "harness_benchmarks" / "results" / "history.jsonl"
+    if not runner.is_file():
+        return False, "run_benchmarks.py missing"
+    if not history.is_file() or not history.read_text().strip():
+        return False, "no benchmark history recorded"
+    last = json.loads(history.read_text().strip().splitlines()[-1])
+    wired = [b for b in last.get("benchmarks", []) if b.get("status") == "wired"]
+    return bool(wired), f"{len(wired)} benchmark(s) wired to real runner output"
+
+
 def h_test_cases() -> tuple[bool, str]:
     d = ROOT / "evals" / "test_cases"
     files = [p for p in d.glob("*") if p.name != ".gitkeep"] if d.is_dir() else []
@@ -444,6 +456,7 @@ CHECKS = {
     "process.progress-ledger-current": h_progress,
     "process.decision-log-appended": h_decision_log,
     "process.errors-ledger": h_errors_ledger,
+    "process.benchmarks-wired": h_benchmarks_wired,
     "research.test-cases-present": h_test_cases,
     "research.expected-results": h_expected_results,
 }

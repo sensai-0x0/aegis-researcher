@@ -39,6 +39,7 @@
     { "id": "process.progress-ledger-current", "capability": "process",   "description": "progress.md has iteration > 0, a set phase, and a queued next action." },
     { "id": "process.decision-log-appended",   "capability": "process",   "description": "The decision log records at least one entry beyond initialization." },
     { "id": "process.errors-ledger",           "capability": "process",   "description": ".agents/evals/errors.md exists with the patch-entry format." },
+    { "id": "process.benchmarks-wired",        "capability": "process",   "description": "evals/harness_benchmarks/run_benchmarks.py exists and has recorded at least one real (non-placeholder) benchmark measurement." },
     { "id": "research.test-cases-present",     "capability": "research",  "description": "evals/test_cases/ contains at least one synthetic research case." },
     { "id": "research.expected-results",       "capability": "research",  "description": "evals/expected_results/ contains ground truth for at least one case." }
   ]
