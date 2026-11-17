@@ -6,6 +6,15 @@ written against `.agents/curriculum.json` (the authoritative specification) and
 implementation. All `core.*` tests are expected to fail (red) until the modules
 they specify are implemented.
 
+## Data model policy (pydantic-first)
+
+Record types are **Pydantic models** that mirror `contracts/`, validated via
+`model_validate` and serialized via `model_dump(mode="json")`. Test payloads come
+from the conftest `*_payload` builders (`mission_payload`, `scope_payload`,
+`tool_request_payload`, …) — do not invent stdlib dataclasses or ad-hoc dicts for
+record shapes. Stdlib shapes are the exception and need an explicit justification
+comment (see `CLAUDE.md` §Data model policy).
+
 ## Running
 
 ```bash

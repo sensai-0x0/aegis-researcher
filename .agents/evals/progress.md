@@ -134,6 +134,7 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | 3 | 1 | curriculum.json is empty (0 bytes) → goal.md ↔ progress.md is the improvement comparator; divergences logged here | E-001 in errors.md; curriculum to be derived from logged decisions |
 | 4 | 1 | Branch strategy: one `feat/<phase>` branch per phase, `--no-ff` merge to main, prune after merge | Matches init.md §5 loop; keeps phase boundaries reviewable |
 | 5 | — | Added failing-first pytest suite (263 tests) + GitHub Actions CI (tests/evals/ratchet jobs) + gate ratchet on `feat/test-suite-ci`; state snapshot in `state/pytest-state-20261117T110041.md` | goal.md §Evolve: regressions caught in CI; gates tighten monotonically via `tests/thresholds.json` + `tools/ci/check_ratchet.py`; two-thread collision resolved by adopting the pydantic/PolicyEngine conftest API |
+| 6 | — | Data model policy: **Pydantic wherever possible**, not stdlib (`CLAUDE.md` §Data model policy + `tests/README.md`) — resolves state-snapshot triage decision in favor of Option B | Curriculum P02.W3 requires "versioned Pydantic models and JSON Schema contracts"; conftest payload builders are the canonical fixtures; dataclass-era `core/` on main migrates rather than widens |
 
 ## Blocker Log (append-only)
 

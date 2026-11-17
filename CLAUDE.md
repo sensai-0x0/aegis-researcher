@@ -20,6 +20,31 @@ Every research activity must compound upon the last:
    invalid. An unverified claim is a hypothesis, never a finding.
 4. An **append-only audit log** records every authorization and policy decision.
 
+## Data model policy (pydantic-first)
+
+Use **Pydantic wherever possible** instead of stdlib dataclasses/plain dicts for
+data shapes:
+
+1. Every canonical record type (Mission, Scope, ToolRequest, AgentRun, Observation,
+   Hypothesis, Finding, Artifact, Review, …) is a **Pydantic model** that mirrors
+   its JSON Schema in `contracts/`. Validate with `model_validate`; serialize with
+   `model_dump(mode="json")` — never hand-map dicts.
+2. Models are **closed** (`model_config = ConfigDict(extra="forbid")`) and mirror
+   the schema exactly — no undeclared fields, no authority fields on agent-facing
+   records.
+3. Parsers, policy decisions, graph records and CLI I/O accept/emit Pydantic
+   models; timestamps and clocks are injectable dependencies, not `datetime.now()`
+   calls scattered through logic.
+4. Stdlib `dataclass`/dict shapes are the exception, allowed only for genuinely
+   unsuitable cases (e.g. performance-critical inner loops) — and each one needs a
+   comment justifying why Pydantic was not used.
+5. When touching code that predates this rule (e.g. dataclass-era `core/`), migrate
+   to Pydantic in the same change set rather than widening the stdlib API.
+
+Canonical test payloads live in `tests/conftest.py` (`*_payload` builders); models
+must validate them and reject field-drop/extra-field variants (see
+`tests/unit/test_contract_roundtrip.py`).
+
 ## Repository map
 
 | Path | Purpose |
