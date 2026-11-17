@@ -6,11 +6,11 @@
 ## Meta
 
 - **Loop iteration:** 6
-- **Last updated:** 2026-11-17 (iter 6)
-- **Current phase:** PHASE-8 COMPLETE — loop seat relocated to `aegis-loop2` after external worktree restructure
-- **Next queued action:** Awaiting graph thread (T1) merge → then integrate graph, un-red 3 heuristics, wire E2E graph leg
+- **Last updated:** 2026-11-17 (iter 6; merged with `feat/curriculum-test-suite-p01-p03` test-suite/CI thread — decision row 21)
+- **Current phase:** PHASE-3 RECONCILIATION — main's Phase 2/3 are complete against the dataclass API; decision row 20 commits to porting that core to the pydantic/contract API (`tests/unit/`, `tests/test_*.py`) before Phase 3 can be marked done against this branch's acceptance bar. Phase 8 (graph leg) status below is otherwise unchanged from main.
+- **Next queued action:** Begin T1 (contracts conformance — 13 remaining failures against curriculum) then T2–T7 (port `core/audit.py` → `core/orchestrator.py` to pydantic) per revised triage in `state/pytest-state-20261117T110041.md` §Addendum
 - **Blockers:** none — graph gate owned by parallel thread
-- **Latest eval run:** 27/30 (90%) — 6/6 owned suites green; 47 tests; E2E smoke 14/14 PASS
+- **Latest eval run:** 27/30 (90%) — rerun on the merged tree, same gate state as main (graph still 0/3, delegated); pytest on the merged tree: 310 collected / 90 passed / 212 failed / 8 errors (up from 263/18 pre-merge; `tests/legacy/` regression net adds coverage against main's still-live dataclass core)
 - **Curriculum alignment:** P01 (evidence vault) pulled forward into iter 4 per `.agents/curriculum.json`; P03 exits govern Phase 4 adapters; progressive disclosure honored (P04+ details not preloaded)
 
 ## Phase Checklist
@@ -150,6 +150,9 @@ Status legend: `[ ]` not started · `[/]` in progress · `[x]` done (validated) 
 | 16 | 6 | Loop seat re-established at `aegis-loop2` after external restructure pruned `aegis-loop`; uncommitted reports/ui files salvaged into the new worktree | E-007; repo restructured by parallel thread (origin added, user test-suite branch WIP on primary tree) |
 | 17 | 6 | Phase 8 executed graph-independently: E2E smoke proves everything except graph ingestion; report renderer validates before rendering; run contract now carries `provenance` on the run record | goal.md "done" requires E2E; graph leg (T1) owned by parallel thread, integration queued |
 | 18 | 6 | `orchestrator.start_run()` records `provenance.initiated_by` | run.schema.json requires provenance; smoke validation caught the gap |
+| 19 | — | Added failing-first pytest suite (263 tests) + GitHub Actions CI (tests/evals/ratchet jobs) + gate ratchet on `feat/test-suite-ci`; state snapshot in `state/pytest-state-20261117T110041.md` | goal.md §Evolve: regressions caught in CI; gates tighten monotonically via `tests/thresholds.json` + `tools/ci/check_ratchet.py`; two-thread collision resolved by adopting the pydantic/PolicyEngine conftest API |
+| 20 | — | Data model policy: **Pydantic wherever possible**, not stdlib (`CLAUDE.md` §Data model policy + `tests/README.md`) — resolves state-snapshot triage decision in favor of Option B | Curriculum P02.W3 requires "versioned Pydantic models and JSON Schema contracts"; conftest payload builders are the canonical fixtures; dataclass-era `core/` on main migrates rather than widens |
+| 21 | — | Merged `main` (through `b0b6394`) into `feat/curriculum-test-suite-p01-p03` (triage T9); main's dataclass-era `core/*.py` + populated `contracts/*.schema.json` now present on this branch, superseding the empty stubs rows 1–18 describe as `[ ]`/`[x]` from the pre-merge perspective | state/pytest-state snapshot addendum; conflicts (progress.md, 2 eval-result files, tests/__init__.py, tests/test_scope.py, tests/test_evidence.py) resolved by: taking main's ledger/result data, union of `__init__.py` docstrings, keeping both HEAD's target-API specs and main's current-API specs (renamed into `tests/legacy/`) as a regression net until the Option B port (row 20) lands |
 
 ## Blocker Log (append-only)
 
