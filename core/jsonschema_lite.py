@@ -1,13 +1,28 @@
-"""Minimal JSON Schema 2020-12 subset validator (stdlib-only).
+"""JSON Schema 2020-12 validator for AEGIS — jsonschema-backed, stdlib-safe.
 
-Single source of truth for AEGIS schema validation: supports exactly the
-keywords used by the AEGIS contracts — type, enum, const, required, properties,
-additionalProperties, items, minItems, minLength, minimum, pattern,
-allOf/if/then. `contracts/validate_fixtures.py` imports this module.
+Single source of truth for AEGIS schema validation. When the `jsonschema`
+package is installed (it is a declared pyproject.toml dependency), `validate`
+delegates to it for full draft 2020-12 coverage. When it is not installed —
+e.g. a bare `python3` with no venv, which several AEGIS environments and
+CI-equivalent runs use deliberately (decision log #2/#15: stdlib guarantees
+the evals always run) — it falls back to a minimal stdlib-only subset
+validator covering exactly the keywords AEGIS contracts use: type, enum,
+const, required, properties, additionalProperties, items, minItems,
+minLength, minimum, pattern, allOf/if/then. Both paths raise the same
+`ValidationError` from the same `validate(value, schema)` call, so every
+caller (`contracts/validate_fixtures.py`, adapters, core/mission.py, …) is
+unaffected by which path is active. Fixture-level parity between the two
+paths is checked manually, not re-verified on every run (no third-party
+dependency in the stdlib-only path itself).
 """
 from __future__ import annotations
 
 import re
+
+try:
+    import jsonschema as _jsonschema
+except ImportError:  # pragma: no cover - exercised wherever the dep is absent
+    _jsonschema = None
 
 
 class ValidationError(Exception):
@@ -31,6 +46,17 @@ def _type_ok(value, expected) -> bool:
 
 def validate(value, schema, path="$") -> None:
     """Validate `value` against `schema`; raise ValidationError on violation."""
+    if _jsonschema is not None:
+        try:
+            _jsonschema.Draft202012Validator(schema).validate(value)
+        except _jsonschema.exceptions.ValidationError as e:
+            raise ValidationError(f"{path}: {e.message}") from e
+        return
+    _validate_stdlib(value, schema, path)
+
+
+def _validate_stdlib(value, schema, path="$") -> None:
+    """Fallback path used only when the `jsonschema` package is absent."""
     if "allOf" in schema:
         for sub in schema["allOf"]:
             _try_conditional(value, sub, path)
