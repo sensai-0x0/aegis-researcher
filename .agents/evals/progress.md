@@ -10,7 +10,7 @@
 - **Current phase:** PHASE-3 RECONCILIATION — main's Phase 2/3 are complete against the dataclass API; decision row 20 commits to porting that core to the pydantic/contract API (`tests/unit/`, `tests/test_*.py`) before Phase 3 can be marked done against this branch's acceptance bar. Phase 8 (graph leg) status below is otherwise unchanged from main.
 - **Next queued action:** Begin T1 (contracts conformance — 13 remaining failures against curriculum) then T2–T7 (port `core/audit.py` → `core/orchestrator.py` to pydantic) per revised triage in `state/pytest-state-20261117T110041.md` §Addendum
 - **Blockers:** none — graph gate owned by parallel thread
-- **Latest eval run:** 27/30 (90%, pre-merge main baseline) — pending rerun on merged tree; pytest baseline pre-merge was 263 collected/18 passed on this branch, 297 collected/77 passed on the merge probe
+- **Latest eval run:** 27/30 (90%) — rerun on the merged tree, same gate state as main (graph still 0/3, delegated); pytest on the merged tree: 310 collected / 90 passed / 212 failed / 8 errors (up from 263/18 pre-merge; `tests/legacy/` regression net adds coverage against main's still-live dataclass core)
 - **Curriculum alignment:** P01 (evidence vault) pulled forward into iter 4 per `.agents/curriculum.json`; P03 exits govern Phase 4 adapters; progressive disclosure honored (P04+ details not preloaded)
 
 ## Phase Checklist

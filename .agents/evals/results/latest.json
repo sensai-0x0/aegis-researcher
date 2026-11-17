@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-11-17T11:01:18+1030",
-  "commit": "4e7e7b0",
+  "timestamp": "2026-11-17T11:34:17+1030",
+  "commit": "8a9b73b",
   "overall": {
     "passed": 27,
     "total": 30,
@@ -62,7 +62,7 @@
       "id": "harness.claude-md-contract",
       "capability": "harness",
       "passed": true,
-      "detail": "3015 bytes, mission/constraints/routing present"
+      "detail": "4386 bytes, mission/constraints/routing present"
     },
     {
       "id": "harness.pyproject-valid",
@@ -212,13 +212,13 @@
       "id": "process.progress-ledger-current",
       "capability": "process",
       "passed": true,
-      "detail": "iter=5, phase=PHASE-8 next (ui/orb, reports, E2E demo) \u2014 Phases 4, 5, 7 complete; graph externally owned"
+      "detail": "iter=6, phase=PHASE-3 RECONCILIATION \u2014 main's Phase 2/3 are complete against the dataclass API; decision row 20 commits to porting that core to the pydantic/contract API (`tests/unit/`, `tests/test_*.py`) before Phase 3 can be marked done against this branch's acceptance bar. Phase 8 (graph leg) status below is otherwise unchanged from main."
     },
     {
       "id": "process.decision-log-appended",
       "capability": "process",
       "passed": true,
-      "detail": "15 entries"
+      "detail": "18 entries"
     },
     {
       "id": "process.errors-ledger",
