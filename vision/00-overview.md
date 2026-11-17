@@ -60,3 +60,5 @@ Each phase ends with a **Goal Project** — a single deliverable that must pass 
 ## Reading order
 
 Start with `01-laboratory-foundations.md` and proceed in order. Phase files deliberately avoid duplicating week-level task lists from the curriculum JSON; they carry the *why*, the through-lines and the gate projects. Detailed briefs unlock per the progressive-disclosure rules — do not preload future-phase exercises into agent context.
+
+`11-operating-model-and-contracts.md` is the cross-phase companion: agent roles, model routing, canonical record contracts, graph discipline and the standing "One clean chain" drill that re-runs at every gate.
