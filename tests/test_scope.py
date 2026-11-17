@@ -1,109 +1,69 @@
-"""TDD spec for ``core/scope.py`` — authorization boundary (currently red).
+"""TDD spec for ``core/scope.py`` — the ScopeManifest authorization boundary (red).
 
-Behavioral mirror of ``.claude/rules/scope.md`` and the agent operating
-contract in the curriculum:
+The conftest payload (``make_scope``) fixes the model shape; the curriculum's
+``default_execution_posture`` fixes the semantics. Structural roundtrips
+against the mission contract are covered by ``tests/unit/``; this module
+specifies the *posture* a scope manifest must enforce:
 
-- **Deny by default.** Anything not explicitly listed is denied, including
-  when no mission exists at all.
-- **Exclusions override authorization.** A target listed as both authorized
-  and excluded is denied.
-- **Every decision is a record.** Decisions carry mission id, target, reason
-  and a timestamp so they can be appended to the audit log.
-- **The resolver cannot be widened at runtime.** There is no API to grant
-  targets after construction; scope changes go through a new approved mission.
-
-The public API specified here (Phase 3 acceptance target)::
-
-    from core.scope import ScopeDecision, ScopeResolver, ScopeViolation, assert_authorized
-
-    resolver = ScopeResolver(mission)          # mission: mapping | None
-    decision = resolver.decide(target)         # -> ScopeDecision
-    resolver.assert_authorized(target)         # raises ScopeViolation if denied
-    assert_authorized(mission, target)         # module-level convenience
+1. **Network is deny-by-default**: a manifest whose ``network.default`` is
+   anything other than ``"deny"`` must not validate. Open-by-default scopes
+   are not expressible.
+2. **An unapproved manifest is not an authorization**: ``approved_by`` and
+   ``approved_at`` (a human, recorded) are mandatory.
+3. **Closed model**: no undeclared fields — nothing can smuggle authority
+   in, and no self-authorization fields exist for an agent to set.
 """
 
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
 pytestmark = [pytest.mark.unit, pytest.mark.safety]
 
-MISSION = {
-    "mission_id": "m-test-001",
-    "title": "synthetic lab inventory",
-    "authorized_targets": ["10.10.0.5", "lab-host-a"],
-    "exclusions": ["10.10.0.1"],
-    "approval_state": "approved",
-}
+
+def test_valid_scope_manifest_validates(make_scope) -> None:
+    from core.scope import ScopeManifest
+
+    scope = ScopeManifest.model_validate(make_scope())
+    assert scope.scope_id == "scope-local-lab-0001"
+    assert scope.network["default"] == "deny"
 
 
-def test_scope_module_exists() -> None:
-    import core.scope  # noqa: F401
+def test_network_open_by_default_is_not_expressible(make_scope) -> None:
+    """The posture is deny-by-default; a scope cannot opt out of it."""
+    from core.scope import ScopeManifest
+
+    payload = make_scope(network={"default": "allow", "allowed_destinations": ["*"]})
+    with pytest.raises(ValidationError):
+        ScopeManifest.model_validate(payload)
 
 
-def test_unlisted_target_is_denied() -> None:
-    from core.scope import ScopeResolver, ScopeViolation
+def test_scope_must_carry_recorded_human_approval(make_scope) -> None:
+    """approved_by/approved_at are mandatory — approval cannot be implicit."""
+    from core.scope import ScopeManifest
 
-    resolver = ScopeResolver(MISSION)
-    with pytest.raises(ScopeViolation):
-        resolver.assert_authorized("unlisted-host")
-
-
-def test_authorized_target_is_allowed() -> None:
-    from core.scope import ScopeResolver
-
-    resolver = ScopeResolver(MISSION)
-    decision = resolver.decide("10.10.0.5")
-    assert decision.allowed is True
-    assert decision.mission_id == "m-test-001"
-    assert decision.target == "10.10.0.5"
-    assert decision.reason  # a denial-free decision still explains itself
-    assert decision.decided_at  # recorded event, not a bool
+    payload = make_scope()
+    payload.pop("approved_by")
+    payload.pop("approved_at")
+    with pytest.raises(ValidationError):
+        ScopeManifest.model_validate(payload)
 
 
-def test_exclusion_overrides_authorization() -> None:
-    from core.scope import ScopeResolver, ScopeViolation
+def test_scope_model_is_closed(make_scope) -> None:
+    """No undeclared fields: authority cannot be smuggled into the manifest."""
+    from core.scope import ScopeManifest
 
-    mission = {**MISSION, "authorized_targets": MISSION["authorized_targets"] + ["10.10.0.1"]}
-    resolver = ScopeResolver(mission)
-    with pytest.raises(ScopeViolation):
-        resolver.assert_authorized("10.10.0.1")
-
-
-def test_no_mission_denies_everything() -> None:
-    """Absence of a prohibition is not authorization: no mission, no access."""
-    from core.scope import ScopeViolation, assert_authorized
-
-    with pytest.raises(ScopeViolation):
-        assert_authorized(None, "10.10.0.5")
+    with pytest.raises(ValidationError):
+        ScopeManifest.model_validate(make_scope(operator_feeling="lucky"))
 
 
-def test_violation_names_target_and_mission() -> None:
-    from core.scope import ScopeResolver, ScopeViolation
+def test_scope_manifest_has_no_self_authorization_fields(make_scope) -> None:
+    """A human approves the manifest; nothing on it carries a policy decision."""
+    from core.scope import ScopeManifest
 
-    resolver = ScopeResolver(MISSION)
-    with pytest.raises(ScopeViolation) as excinfo:
-        resolver.assert_authorized("unlisted-host")
-    message = str(excinfo.value)
-    assert "unlisted-host" in message
-    assert "m-test-001" in message
-
-
-def test_scope_cannot_be_widened_at_runtime() -> None:
-    """Agents must not be able to grant themselves new targets."""
-    from core.scope import ScopeResolver
-
-    resolver = ScopeResolver(MISSION)
-    mutators = {"allow", "add_target", "authorize", "widen", "grant", "set_targets"}
-    exposed = {name for name in dir(resolver) if not name.startswith("_")}
-    assert not (exposed & mutators), f"resolver exposes scope-widening API: {sorted(exposed & mutators)}"
-
-
-def test_deny_decisions_are_records_too() -> None:
-    from core.scope import ScopeResolver
-
-    resolver = ScopeResolver(MISSION)
-    decision = resolver.decide("unlisted-host")
-    assert decision.allowed is False
-    assert decision.mission_id == "m-test-001"
-    assert decision.reason
+    forbidden = {"decision", "policy_decision", "policy_outcome", "allow", "granted", "authorized"}
+    field_names = set(ScopeManifest.model_fields)
+    assert not (field_names & forbidden), (
+        f"ScopeManifest declares authority fields: {sorted(field_names & forbidden)}"
+    )

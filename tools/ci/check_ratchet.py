@@ -79,7 +79,9 @@ def read_current(rel_path: str) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base", required=True, help="git ref to compare against (e.g. origin/main)")
+    parser.add_argument(
+        "--base", required=True, help="git ref to compare against (e.g. origin/main)"
+    )
     args = parser.parse_args()
 
     loosened: list[tuple[str, float, float]] = []

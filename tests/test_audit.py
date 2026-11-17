@@ -16,9 +16,10 @@ The public API specified here (Phase 3 acceptance target)::
 
     from core.audit import AuditLog
 
-    log = AuditLog(path)                       # JSONL, one record per line
+    log = AuditLog(path, clock=None)           # JSONL, one record per line; clock injectable
     record = log.append(event: dict)           # -> dict with hash, prev_hash
     log.verify() -> bool                       # recompute the whole chain
+    log.entries() -> iterator[dict]            # ordered replay of the log
 """
 
 from __future__ import annotations
@@ -34,10 +35,10 @@ HEX64 = re.compile(r"[0-9a-f]{64}")
 FORBIDDEN_METHODS = {"delete", "truncate", "remove", "pop", "clear", "rewrite", "reset", "purge"}
 
 
-def _make_log(tmp_path, events=None):
+def _make_log(tmp_path, events=None, clock=None):
     from core.audit import AuditLog
 
-    log = AuditLog(tmp_path / "audit.jsonl")
+    log = AuditLog(tmp_path / "audit.jsonl", clock=clock)
     for event in events or []:
         log.append(event)
     return log
@@ -114,3 +115,20 @@ def test_append_returns_record_with_event_data(tmp_path) -> None:
     assert record["event"] == "policy.decision"
     assert record["allowed"] is False
     assert "timestamp" in record or "recorded_at" in record
+
+
+def test_entries_replays_the_log_in_order(tmp_path) -> None:
+    events = [{"event": "mission.open"}, {"event": "policy.decision"}, {"event": "tool.execution"}]
+    log = _make_log(tmp_path, events=events)
+    replayed = list(log.entries())
+    assert [entry["event"] for entry in replayed] == [event["event"] for event in events]
+
+
+def test_injected_clock_is_respected(tmp_path, clock) -> None:
+    """Timestamps must be deterministic when a clock is injected (conftest pattern)."""
+    from core.audit import AuditLog
+
+    log = AuditLog(tmp_path / "audit.jsonl", clock=clock)
+    record = log.append({"event": "mission.open"})
+    stamped = record.get("timestamp") or record.get("recorded_at")
+    assert clock().isoformat() in str(stamped)

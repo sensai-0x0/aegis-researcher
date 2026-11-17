@@ -35,6 +35,18 @@ testpaths = ["tests"]
 addopts = "-ra"
 # Structural/safety tests must never be skipped silently.
 xfail_strict = true
+markers = [
+    "contract: JSON Schema contract conformance, driven by .agents/curriculum.json",
+    "unit: core-module behavior specs (TDD — tests define the API before it exists)",
+    "safety: authorization, policy-gating and audit-integrity guarantees",
+    "evals: eval-harness integrity (registry/runner sync, gates, ratchet)",
+]
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
 
 [tool.ruff]
 line-length = 100

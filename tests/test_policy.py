@@ -1,24 +1,32 @@
-"""TDD spec for ``core/policy.py`` — approval gating (currently red).
+"""TDD spec for ``core/policy.py`` — the authorization control plane (red).
 
-Behavioral mirror of ``.claude/rules/scope.md`` §MUST-5 and the operating
-contract principle *"agents propose and interpret; the control plane
-authorizes"*. The eval heuristic ``safety.policy-approval-gating`` checks
-that consequential actions are gated behind recorded human approval; these
-tests define the exact semantics:
+Behavioral mirror of ``.claude/rules/scope.md`` and the operating contract
+principle *"agents propose and interpret; the control plane authorizes"*.
+The conftest ``make_orchestrator`` bundle fixes the construction shape::
 
-- Actions are classified: ``READ_ONLY`` / ``INTRUSIVE`` / ``CONSEQUENTIAL``.
-- Unclassifiable operations default to ``CONSEQUENTIAL`` (deny-by-default).
-- Consequential actions require a recorded human approval token.
-- **No self-approval**: an approval token issued by the same agent run that
-  requests the action is rejected.
-- Every decision is a record, not a boolean.
+    from core.policy import PolicyEngine, ToolRequest
 
-The public API specified here (Phase 3 acceptance target)::
+    engine = PolicyEngine(missions=[mission], scopes=[scope], audit=audit, clock=clock)
+    request = ToolRequest.model_validate(make_tool_request())
+    decision = engine.decide(request)   # -> allowed / reason / decided_at
 
-    from core.policy import ActionClass, PolicyDecision, classify_action, evaluate
+Semantics specified here (all derived from the curriculum's
+``default_execution_posture`` and goal.md hard failures):
 
-    classify_action(operation)                # -> ActionClass
-    evaluate(request, approval=None)          # -> PolicyDecision
+1. A request is allowed only when *every* gate passes: approved unexpired
+   mission, approved unexpired scope, target in the scope's targets,
+   operation in ``allowed_actions`` and not in ``excluded_actions``.
+2. **Deny by default**: unlisted operations are denied.
+3. **Exclusions override the allowlist** — listing an operation in both is
+   still a denial.
+4. **Network is deny-by-default**: with the scope's ``network.default =
+   "deny"`` and no allowed destinations, ``network.connect`` is denied.
+5. **Consequential actions need recorded human approval**; an unapproved
+   request carrying ``approval_requirement: "human_approval"`` is denied.
+6. **Every decision is a record** (not a boolean) and **every decision is
+   appended to the audit chain**.
+7. **The engine cannot be widened at runtime** — there is no API to grant
+   missions, scopes or operations after construction.
 """
 
 from __future__ import annotations
@@ -27,83 +35,150 @@ import pytest
 
 pytestmark = [pytest.mark.unit, pytest.mark.safety]
 
-READ_ONLY_OPS = ("read", "list", "stat", "get", "inspect")
-CONSEQUENTIAL_OPS = ("write", "delete", "execute", "modify_state", "external_disclosure")
 
-HUMAN_APPROVAL = {"approved_by": "human-owner", "approved_at": "2026-11-17T00:00:00Z"}
+@pytest.fixture()
+def engine_factory(make_mission, make_scope, audit_path, clock):
+    """Build a PolicyEngine around one approved mission + scope."""
 
+    def _make(mission_overrides=None, scope_overrides=None):
+        from core.audit import AuditLog
+        from core.mission import Mission
+        from core.policy import PolicyEngine
+        from core.scope import ScopeManifest
 
-def _request(operation: str, requested_by: str = "agent-run-1") -> dict:
-    return {
-        "request_id": "req-001",
-        "mission_id": "m-test-001",
-        "operation": operation,
-        "target_asset_id": "asset-lab-host-a",
-        "requested_by": requested_by,
-    }
+        mission = Mission.model_validate(make_mission(**(mission_overrides or {})))
+        scope = ScopeManifest.model_validate(make_scope(**(scope_overrides or {})))
+        audit = AuditLog(audit_path, clock=clock)
+        engine = PolicyEngine(missions=[mission], scopes=[scope], audit=audit, clock=clock)
+        return engine, audit
 
-
-def test_policy_module_exists() -> None:
-    import core.policy  # noqa: F401
-
-
-@pytest.mark.parametrize("operation", READ_ONLY_OPS)
-def test_read_only_operations_are_classified_read_only(operation: str) -> None:
-    from core.policy import ActionClass, classify_action
-
-    assert classify_action(operation) is ActionClass.READ_ONLY
+    return _make
 
 
-@pytest.mark.parametrize("operation", CONSEQUENTIAL_OPS)
-def test_consequential_operations_are_classified_consequential(operation: str) -> None:
-    from core.policy import ActionClass, classify_action
+@pytest.fixture()
+def request_factory(make_tool_request):
+    """Build a ToolRequest from the canonical payload."""
 
-    assert classify_action(operation) is ActionClass.CONSEQUENTIAL
+    def _make(**overrides):
+        from core.policy import ToolRequest
 
+        return ToolRequest.model_validate(make_tool_request(**overrides))
 
-def test_unknown_operation_defaults_to_consequential() -> None:
-    """Deny-by-default posture: unclassifiable operations are treated as consequential."""
-    from core.policy import ActionClass, classify_action
-
-    assert classify_action("frobnicate") is ActionClass.CONSEQUENTIAL
+    return _make
 
 
-def test_consequential_action_without_approval_is_denied() -> None:
-    from core.policy import evaluate
+# --- The happy path -----------------------------------------------------------
 
-    decision = evaluate(_request("delete"), approval=None)
+
+def test_in_scope_read_only_request_is_allowed(engine_factory, request_factory) -> None:
+    engine, _ = engine_factory()
+    decision = engine.decide(request_factory())
+    assert decision.allowed is True
+    assert decision.reason
+    assert decision.decided_at
+
+
+# --- Deny-by-default gates ------------------------------------------------------
+
+
+def test_target_outside_scope_is_denied(engine_factory, request_factory) -> None:
+    engine, _ = engine_factory()
+    request = request_factory(target_asset_id="asset-someone-elses-box")
+    decision = engine.decide(request)
+    assert decision.allowed is False
+    assert "asset-someone-elses-box" in decision.reason
+
+
+def test_unlisted_operation_is_denied(engine_factory, request_factory) -> None:
+    """Nothing outside allowed_actions is permitted — absence is not authorization."""
+    engine, _ = engine_factory()
+    decision = engine.decide(request_factory(operation="firmware.flash"))
+    assert decision.allowed is False
+    assert "firmware.flash" in decision.reason
+
+
+def test_excluded_operation_is_denied_even_if_allowlisted(engine_factory, request_factory) -> None:
+    """Exclusions take precedence over the allowlist."""
+    engine, _ = engine_factory(
+        mission_overrides={"allowed_actions": ["inventory.read", "file.write"]}
+    )
+    decision = engine.decide(request_factory(operation="file.write"))
+    assert decision.allowed is False
+    assert "file.write" in decision.reason
+
+
+def test_network_is_deny_by_default(engine_factory, request_factory) -> None:
+    """Scope network.default=deny with no allowed destinations blocks contact."""
+    engine, _ = engine_factory()
+    decision = engine.decide(request_factory(operation="network.connect"))
+    assert decision.allowed is False
+
+
+def test_expired_mission_denies_everything(engine_factory, request_factory) -> None:
+    """An expired authorization is not an authorization."""
+    engine, _ = engine_factory(
+        mission_overrides={"expiry_time": "2026-11-10T00:00:00+00:00"}
+    )
+    decision = engine.decide(request_factory())
+    assert decision.allowed is False
+
+
+def test_expired_scope_denies_everything(engine_factory, request_factory) -> None:
+    engine, _ = engine_factory(
+        scope_overrides={"expires_at": "2026-11-10T00:00:00+00:00"}
+    )
+    decision = engine.decide(request_factory())
+    assert decision.allowed is False
+
+
+def test_unapproved_mission_denies_everything(engine_factory, request_factory) -> None:
+    engine, _ = engine_factory(mission_overrides={"approval_state": "pending"})
+    decision = engine.decide(request_factory())
+    assert decision.allowed is False
+
+
+# --- Approval gating for consequential actions ------------------------------------
+
+
+def test_consequential_action_without_approval_is_denied(engine_factory, request_factory) -> None:
+    engine, _ = engine_factory()
+    request = request_factory(operation="file.write", approval_requirement="human_approval")
+    decision = engine.decide(request)
     assert decision.allowed is False
     assert "approval" in decision.reason.lower()
 
 
-def test_consequential_action_with_human_approval_is_allowed() -> None:
-    from core.policy import evaluate
-
-    decision = evaluate(_request("delete"), approval=HUMAN_APPROVAL)
-    assert decision.allowed is True
-    assert decision.decided_at
+# --- Decisions are records, and they are audited -----------------------------------
 
 
-def test_agent_cannot_self_approve() -> None:
-    """An approval token from the requesting agent run is not human approval."""
-    from core.policy import evaluate
-
-    self_approval = {"approved_by": "agent-run-1", "approved_at": "2026-11-17T00:00:00Z"}
-    decision = evaluate(_request("delete", requested_by="agent-run-1"), approval=self_approval)
-    assert decision.allowed is False
-    assert "self" in decision.reason.lower() or "approval" in decision.reason.lower()
-
-
-def test_read_only_action_needs_no_approval() -> None:
-    from core.policy import evaluate
-
-    decision = evaluate(_request("read"), approval=None)
-    assert decision.allowed is True
-
-
-def test_policy_decision_is_a_record() -> None:
-    from core.policy import evaluate
-
-    decision = evaluate(_request("delete"), approval=None)
-    for field in ("mission_id", "operation", "allowed", "reason", "decided_at"):
+def test_decision_is_a_record(engine_factory, request_factory) -> None:
+    engine, _ = engine_factory()
+    decision = engine.decide(request_factory())
+    for field in ("allowed", "reason", "decided_at"):
         assert hasattr(decision, field), f"PolicyDecision must expose '{field}'"
+
+
+def test_every_decision_is_appended_to_the_audit_chain(engine_factory, request_factory) -> None:
+    """goal.md: unlogged consequential execution is a hard failure."""
+    engine, audit = engine_factory()
+    engine.decide(request_factory())
+    engine.decide(request_factory(operation="firmware.flash"))  # denied too
+
+    assert audit.verify() is True
+    entries = list(audit.entries())
+    assert len(entries) >= 2, "each decision (allowed or denied) must be audited"
+    joined = " ".join(str(entry) for entry in entries)
+    assert "request-local-lab-0001" in joined
+
+
+# --- The engine cannot be widened ----------------------------------------------------
+
+
+def test_engine_cannot_be_widened_at_runtime(engine_factory) -> None:
+    """Agents must not be able to grant themselves missions, scopes or operations."""
+    engine, _ = engine_factory()
+    mutators = {"add_mission", "add_scope", "grant", "widen", "allow", "allow_operation", "set_policy"}
+    exposed = {name for name in dir(engine) if not name.startswith("_")}
+    assert not (exposed & mutators), (
+        f"PolicyEngine exposes scope-widening API: {sorted(exposed & mutators)}"
+    )
